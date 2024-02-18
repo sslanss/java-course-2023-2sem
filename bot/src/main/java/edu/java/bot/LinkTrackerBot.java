@@ -4,12 +4,14 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.BaseRequest;
+import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.BaseResponse;
 import edu.java.bot.configuration.ApplicationConfig;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class LinkTrackerBot implements Bot {
-
     private final TelegramBot bot;
     private final CommandService service;
 
@@ -23,27 +25,32 @@ public class LinkTrackerBot implements Bot {
         try {
             bot.execute(request);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("Error response - Description: {}", e.getMessage());
         }
     }
 
     @Override
     public int process(List<Update> updates) {
-        for (Update update:updates){
-            System.out.println(update.message().text());
-        }
         return 0;
     }
 
     @Override
     public void start() {
         bot.setUpdatesListener(updates -> {
-            for (Update update : updates) {
-                var response = service.processUpdate(update);
-                execute(response);
-            }
+            updates.forEach((update) -> {
+                SendMessage message = service.processUpdate(update);
+                execute(message);
+            });
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
-        });//обработка ошибок?
+        }, e -> {
+            if (e.response() != null) {
+                log.error("Telegram API error - Code: {}, Description: {}", e.response().errorCode(),
+                    e.response().description()
+                );
+            } else {
+                log.error("Network error", e);
+            }
+        });
     }
 
     @Override

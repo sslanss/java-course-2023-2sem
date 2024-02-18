@@ -8,27 +8,16 @@ import edu.java.bot.commands.ListCommand;
 import edu.java.bot.commands.StartCommand;
 import edu.java.bot.commands.TrackCommand;
 import edu.java.bot.commands.UntrackCommand;
-import java.util.HashSet;
-import java.util.Set;
 
 public class CommandService {
-    private final Set<Command> commands;
 
     public CommandService() {
-        this.commands = new HashSet<>() {{
-            add(new StartCommand());
-            add(new HelpCommand());
-            add(new TrackCommand());
-            add(new ListCommand());
-            add(new UntrackCommand());
-        }};
     }
 
     private boolean hasUpdateCorrectMessage(Update update) {
         return update.message() != null && update.message().text() != null;
     }
 
-    //херь
     private Command identifyCommand(Update update) {
         if (hasUpdateCorrectMessage(update)) {
             String text = update.message().text();
@@ -37,7 +26,12 @@ public class CommandService {
                     return new StartCommand();
                 case "/help":
                     return new HelpCommand();
-
+                case "/track":
+                    return new TrackCommand();
+                case "/untrack":
+                    return new UntrackCommand();
+                case "/list":
+                    return new ListCommand();
             }
         }
         return null;
@@ -45,10 +39,10 @@ public class CommandService {
 
     public SendMessage processUpdate(Update update) {
         Command command = identifyCommand(update);
-        if (command!=null) {
+        if (command != null) {
             return command.handle(update);
         }
-        return  new SendMessage(update.message().chat().id(), "Команда не распознана!");
+        return new SendMessage(update.message().chat().id(), "Команда не распознана!");
     }
 
 }
