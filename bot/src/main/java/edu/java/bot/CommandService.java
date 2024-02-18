@@ -19,22 +19,19 @@ public class CommandService {
     }
 
     private Command identifyCommand(Update update) {
+        Command currentCommand = null;
         if (hasUpdateCorrectMessage(update)) {
             String text = update.message().text();
-            switch (text) {
-                case "/start":
-                    return new StartCommand();
-                case "/help":
-                    return new HelpCommand();
-                case "/track":
-                    return new TrackCommand();
-                case "/untrack":
-                    return new UntrackCommand();
-                case "/list":
-                    return new ListCommand();
-            }
+            currentCommand = switch (text) {
+                case "/start" -> new StartCommand();
+                case "/help" -> new HelpCommand();
+                case "/track" -> new TrackCommand();
+                case "/untrack" -> new UntrackCommand();
+                case "/list" -> new ListCommand();
+                default -> currentCommand;
+            };
         }
-        return null;
+        return currentCommand;
     }
 
     public SendMessage processUpdate(Update update) {
