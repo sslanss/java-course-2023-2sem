@@ -2,16 +2,27 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.services.LinkService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UntrackCommand implements Command {
+    private final LinkService service;
+
+    @Autowired
+    public UntrackCommand(LinkService service) {
+        this.service = service;
+    }
+
     @Override
     public String command() {
-        return "/track";
+        return "/untrack";
     }
 
     @Override
     public String description() {
-        return "начать отслеживание ссылки";
+        return "прекратить отслеживание ссылки";
     }
 
     @Override

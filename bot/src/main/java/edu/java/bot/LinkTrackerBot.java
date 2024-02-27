@@ -7,6 +7,9 @@ import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.BaseResponse;
 import edu.java.bot.configuration.ApplicationConfig;
+import edu.java.bot.repositories.LinkRepository;
+import edu.java.bot.services.CommandService;
+import edu.java.bot.services.LinkService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +20,8 @@ public class LinkTrackerBot implements Bot {
 
     public LinkTrackerBot(ApplicationConfig config) {
         bot = new TelegramBot(config.telegramToken());
-        service = new CommandService();
+        //здесь исправить
+        service = new CommandService(new LinkService(new LinkRepository()));
     }
 
     @Override
@@ -31,18 +35,16 @@ public class LinkTrackerBot implements Bot {
 
     @Override
     public int process(List<Update> updates) {
-        return 0;
+        updates.forEach((update) -> {
+            SendMessage message = service.processUpdate(update);
+            execute(message);
+        });
+        return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
     @Override
     public void start() {
-        bot.setUpdatesListener(updates -> {
-            updates.forEach((update) -> {
-                SendMessage message = service.processUpdate(update);
-                execute(message);
-            });
-            return UpdatesListener.CONFIRMED_UPDATES_ALL;
-        }, e -> {
+        bot.setUpdatesListener(this, e -> {
             if (e.response() != null) {
                 log.error("Telegram API error - Code: {}, Description: {}", e.response().errorCode(),
                     e.response().description()
@@ -55,6 +57,5 @@ public class LinkTrackerBot implements Bot {
 
     @Override
     public void close() {
-
     }
 }

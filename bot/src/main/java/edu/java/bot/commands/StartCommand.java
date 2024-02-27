@@ -2,7 +2,9 @@ package edu.java.bot.commands;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import org.springframework.stereotype.Component;
 
+@Component
 public class StartCommand implements Command {
     @Override
     public String command() {
@@ -16,12 +18,10 @@ public class StartCommand implements Command {
 
     @Override
     public SendMessage handle(Update update) {
+        //TODO: проверка на то, что пользователь уже был зарегистрирован ранее
         return new SendMessage(update.message().chat().id(), """
-            /start - зарегистрировать пользователя
-            /help - вывести окно с командами
-            /track - начать отслеживание ссылки
-            /untrack - прекратить отслеживание ссылки
-            /list - показать список отслеживаемых ссылок
+            Вы были зарегистрированы! Приветствую, я бот для отслеживания ссылок.
+            Для получения списка команд, введите /help.
             """);
     }
 }
