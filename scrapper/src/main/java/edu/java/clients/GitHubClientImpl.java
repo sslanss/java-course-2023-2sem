@@ -2,10 +2,14 @@ package edu.java.clients;
 
 import edu.java.responses.GitHubResponse;
 import jakarta.validation.constraints.NotNull;
+import java.time.OffsetDateTime;
+import java.util.List;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+
 
 public class GitHubClientImpl implements GitHubClient {
-    private final String BASE_URL = "https://api.github.com";
+    private static final String BASE_URL = "https://api.github.com";
     private final WebClient webClient;
 
     public GitHubClientImpl() {
@@ -17,13 +21,21 @@ public class GitHubClientImpl implements GitHubClient {
     }
 
     @Override
-    public GitHubResponse getRepositoryUpdate(@NotNull String owner, @NotNull String repository) {
-        webClient.get()
-            .uri("repos/{owner}/{repo}", owner, repository)
+    public List<GitHubResponse> getRepositoryUpdate(
+        @NotNull String owner, @NotNull String repository,
+        @NotNull OffsetDateTime lastChecked
+    ) {
+        return webClient.get()
+            .uri(uriBuilder -> uriBuilder.path("repos/{owner}/{repo}/activity")
+                .queryParam("after", lastChecked.toString())
+                .queryParam("direction", "asc")
+                .build(owner, repository))
             .retrieve()
-            .bodyToMono(GitHubResponse.class)
+            .bodyToFlux(GitHubResponse.class)
+            .switchIfEmpty(Flux.empty())
+            .collectList()
             .block();
-            //.onStatus(HttpStatus::is4xxClientError, clientResponse -> )
-        return null;
+
+        //.onStatus(HttpStatus::is4xxClientError, clientResponse -> )
     }
 }

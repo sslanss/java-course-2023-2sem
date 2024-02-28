@@ -17,6 +17,5 @@ public class ClientConfig {
     @Bean
     public StackOverflowClient stackOverflowWebClient() {
         return new StackOverflowClientImpl();
-        //return WebClient.create("https://api.stackexchange.com");
     }
 }
