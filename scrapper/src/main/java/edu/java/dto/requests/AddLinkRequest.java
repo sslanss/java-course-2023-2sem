@@ -1,6 +1,7 @@
 package edu.java.dto.requests;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class AddLinkRequest {
-    @NotNull
+    @NotEmpty
+    @NotBlank
     private String link;
 }

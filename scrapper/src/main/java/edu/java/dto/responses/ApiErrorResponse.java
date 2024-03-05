@@ -1,19 +1,25 @@
 package edu.java.dto.responses;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class ApiErrorResponse {
-    @NotNull
+    @NotEmpty
+    @NotBlank
     private String description;
-    @NotNull
+    @NotEmpty
+    @NotBlank
     private String code;
+    @NotNull
     private String exceptionName;
     private String exceptionMessage;
-    private String[] stacktrace;
+    private List<String> stacktrace;
 }
