@@ -1,0 +1,39 @@
+package edu.java.client;
+
+import edu.java.exceptions.BadRequestException;
+import edu.java.responses.ApiErrorResponse;
+import edu.java.requests.LinkUpdateRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+import java.net.URI;
+import java.util.List;
+
+public class BotClient {
+    private final WebClient client;
+
+    public BotClient(WebClient client) {
+        this.client = client;
+    }
+
+    public void sendLinkUpdate(Long id, String url, String description, List<Long> tgChatIds) {
+        LinkUpdateRequest linkUpdate = new LinkUpdateRequest(id, URI.create(url), description, tgChatIds);
+
+        client.post()
+            .uri("/updates")
+            .body(BodyInserters.fromValue(linkUpdate))
+            .retrieve()
+            .onStatus(
+                (httpStatusCode -> httpStatusCode.equals(HttpStatus.BAD_REQUEST)),
+                response -> response.bodyToMono(ApiErrorResponse.class)
+                    .flatMap(errorResponse -> Mono.error(new BadRequestException(
+                            errorResponse.getCode(),
+                            errorResponse.getDescription()
+                        ))
+                    )
+            )
+            .toBodilessEntity()
+            .block();
+    }
+}

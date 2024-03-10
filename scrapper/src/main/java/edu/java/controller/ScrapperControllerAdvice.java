@@ -1,11 +1,11 @@
 package edu.java.controller;
 
-import edu.java.dto.responses.ApiErrorResponse;
 import edu.java.exceptions.AlreadyTrackedLinkException;
 import edu.java.exceptions.BadRequestException;
 import edu.java.exceptions.ChatNotFoundException;
 import edu.java.exceptions.ChatReregisteringException;
 import edu.java.exceptions.UntrackedLinkException;
+import edu.java.responses.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,8 +42,8 @@ public class ScrapperControllerAdvice {
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiErrorResponse> handleBadRequestException(BadRequestException e) {
-        ApiErrorResponse errorResponse = new ApiErrorResponse("Incorrect request",
-            HttpStatus.BAD_REQUEST.toString(), e.getClass().getName(), null, null
+        ApiErrorResponse errorResponse = new ApiErrorResponse(e.getResponseMessage(),
+            e.getHttpStatus(), e.getClass().getName(), null, null
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(errorResponse);

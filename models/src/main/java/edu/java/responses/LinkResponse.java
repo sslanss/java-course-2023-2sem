@@ -1,26 +1,20 @@
-package edu.java.bot.dto;
+package edu.java.responses;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
+import java.net.URI;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
-public class LinkUpdate {
+public class LinkResponse {
     @NotNull
-    private Long id;
+    private Integer id;
     @NotEmpty
     @NotBlank
-    private String url;
-    @NotEmpty
-    @NotBlank
-    private String description;
-    @NotEmpty
-    private List<Long> tgChatIds;
+    private URI url;
 }

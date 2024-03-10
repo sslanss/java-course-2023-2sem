@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/tg-chat")
 public class TgChatController {
+    private final static String BAD_REQUEST_MESSAGE = "Incorrect request parameters";
     @PostMapping("/{id}")
     public ResponseEntity<HttpStatus> registerChat(@PathVariable Integer id) {
         if (id == null) {
-            throw new BadRequestException();
+            throw new BadRequestException(HttpStatus.BAD_REQUEST.toString(), BAD_REQUEST_MESSAGE);
         }
         //проверка, иначе throw ChatReregisteringException
         return ResponseEntity.ok(HttpStatus.OK);
@@ -24,7 +25,7 @@ public class TgChatController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteChat(@PathVariable Integer id) {
         if (id == null) {
-            throw new BadRequestException();
+            throw new BadRequestException(HttpStatus.BAD_REQUEST.toString(), BAD_REQUEST_MESSAGE);
         }
         //проверка, иначе throw ChatNotFoundException
         return ResponseEntity.ok(HttpStatus.OK);

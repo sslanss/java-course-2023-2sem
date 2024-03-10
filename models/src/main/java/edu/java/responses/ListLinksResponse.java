@@ -1,6 +1,7 @@
-package edu.java.dto.responses;
+package edu.java.responses;
 
 import jakarta.validation.constraints.NotEmpty;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ListLinksResponse {
     @NotEmpty
-    private LinkResponse[] links;
+    private List<LinkResponse> links;
     private Integer size;
 }
