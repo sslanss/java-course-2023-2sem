@@ -19,7 +19,7 @@ public class SimpleIntegrationTest extends IntegrationTest {
 
     private final static String SELECT_SQL_QUERY = "SELECT * FROM chats;";
 
-    private final static  String CREATE_SQL_QUERY = """
+    private final static String CREATE_SQL_QUERY = """
         CREATE TABLE IF NOT EXISTS users(
             user_id BIGINT PRIMARY KEY
         );
@@ -45,7 +45,7 @@ public class SimpleIntegrationTest extends IntegrationTest {
         String expected = "12345 34567 56789";
         StringBuilder result = new StringBuilder();
         while (resultSet.next()) {
-            result.append(resultSet.getString("chat_id") + (resultSet.isLast() ? "":" "));
+            result.append(resultSet.getString("chat_id") + (resultSet.isLast() ? "" : " "));
         }
         Assertions.assertThat(result.toString()).isEqualTo(expected);
     }
@@ -59,7 +59,8 @@ public class SimpleIntegrationTest extends IntegrationTest {
 
         DatabaseMetaData metaData = connection.getMetaData();
         ResultSet tablesResultSet = metaData.getTables(null, null, "users",
-            new String[]{"TABLE"});
+            new String[] {"TABLE"}
+        );
         assertThat(tablesResultSet.next()).isTrue();
     }
 }
