@@ -36,7 +36,7 @@ public class StackOverflowClientImpl implements StackOverflowClient {
     }
 
     @Override
-    public List<StackOverflowResponse> getQuestionUpdate(long questionId, @NotNull OffsetDateTime lastChecked) {
+    public StackOverflowResponse getQuestionUpdate(long questionId, @NotNull OffsetDateTime lastChecked) {
         return webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path("questions/{ids}/answers")
@@ -46,9 +46,7 @@ public class StackOverflowClientImpl implements StackOverflowClient {
                 .queryParam("order", "desc")
                 .build(questionId))
             .retrieve()
-            .bodyToFlux(StackOverflowResponse.class)
-            .switchIfEmpty(Flux.empty())
-            .collectList()
+            .bodyToMono(StackOverflowResponse.class)
             .block();
     }
 }

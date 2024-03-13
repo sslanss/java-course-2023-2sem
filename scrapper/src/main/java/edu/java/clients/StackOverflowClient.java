@@ -5,5 +5,5 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface StackOverflowClient {
-    List<StackOverflowResponse> getQuestionUpdate(long questionId, OffsetDateTime lastChecked);
+    StackOverflowResponse getQuestionUpdate(long questionId, OffsetDateTime lastChecked);
 }

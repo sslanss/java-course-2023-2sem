@@ -27,12 +27,12 @@ public class GitHubClientImpl implements GitHubClient {
     ) {
         return webClient.get()
             .uri(uriBuilder -> uriBuilder.path("repos/{owner}/{repo}/activity")
-                .queryParam("after", lastChecked.toString())
                 .queryParam("direction", "asc")
                 .build(owner, repository))
             .retrieve()
             .bodyToFlux(GitHubResponse.class)
             .switchIfEmpty(Flux.empty())
+            .filter(gitHubResponse -> gitHubResponse.lastModified().isAfter(lastChecked))
             .collectList()
             .block();
 
