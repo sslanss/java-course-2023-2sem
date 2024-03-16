@@ -32,7 +32,6 @@ public class LinksController {
         // поиск в сервисе
         ListLinksResponse response = new ListLinksResponse(new ArrayList<>(), 0);
         return ResponseEntity.ok()
-            //.header("Tg-Chat-Id", chatId.toString())
             .body(response);
     }
 
@@ -49,7 +48,6 @@ public class LinksController {
         // добавление в сервис, ?генерация там id
         LinkResponse response = new LinkResponse(0, addLinkRequest.getLink());
         return ResponseEntity.ok()
-            //.header("Tg-Chat-Id", chatId.toString())
             .body(response);
     }
 
@@ -66,7 +64,6 @@ public class LinksController {
         // удаление из сервиса
         LinkResponse response = new LinkResponse(0, removeLinkRequest.getLink());
         return ResponseEntity.ok()
-            //.header("Tg-Chat-Id", chatId.toString())
             .body(response);
     }
 }

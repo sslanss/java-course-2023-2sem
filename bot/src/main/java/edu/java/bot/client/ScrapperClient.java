@@ -1,42 +1,123 @@
 package edu.java.bot.client;
 
 import edu.java.exceptions.BadRequestException;
+import edu.java.requests.AddLinkRequest;
+import edu.java.requests.RemoveLinkRequest;
 import edu.java.responses.ApiErrorResponse;
+import edu.java.responses.LinkResponse;
+import edu.java.responses.ListLinksResponse;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import java.net.URI;
 
 public class ScrapperClient {
     private final WebClient client;
+    private static final String TG_CHAT_BASE_URL = "/tg-chat";
+
+    private static final String LINKS_BASE_URL = "/links";
+
+    public static final String TG_CHAT_ID_HEADER = "Tg-Chat-Id";
 
     public ScrapperClient(WebClient client) {
         this.client = client;
     }
 
-    private boolean isBadRequest(HttpStatusCode httpStatusCode){
+    private boolean isBadRequest(HttpStatusCode httpStatusCode) {
         return httpStatusCode.equals(HttpStatus.BAD_REQUEST);
     }
 
-    public String registerChat(Integer id){
+    private boolean isAlreadyReported(HttpStatusCode httpStatusCode) {
+        return httpStatusCode.equals(HttpStatus.ALREADY_REPORTED);
+    }
+
+    private boolean isNotFound(HttpStatusCode httpStatusCode) {
+        return httpStatusCode.equals(HttpStatus.NOT_FOUND);
+    }
+
+    private Mono<Exception> handleBadRequest(ClientResponse response) {
+        return response.bodyToMono(ApiErrorResponse.class)
+            .flatMap(errorResponse -> Mono.error(new BadRequestException(
+                errorResponse.getCode(),
+                errorResponse.getDescription()
+            )));
+    }
+
+    private Mono<String> handleRegistrationResponse(ClientResponse response) {
+        if (isAlreadyReported(response.statusCode())) {
+            return response.bodyToMono(ApiErrorResponse.class)
+                .map(ApiErrorResponse::getDescription);
+        }
+        return response.bodyToMono(String.class).map(responseBody -> "Chat was registered");
+    }
+
+    private Mono<String> handleDeletingResponse(ClientResponse response) {
+        if (isNotFound(response.statusCode())) {
+            return response.bodyToMono(ApiErrorResponse.class)
+                .map(ApiErrorResponse::getDescription);
+        }
+        return response.bodyToMono(String.class).map(responseBody -> "Chat was deleted");
+    }
+
+    public String registerChat(Integer id) {
         return client.post()
-            .uri("/tg-chat/{id}", id)
+            .uri(TG_CHAT_BASE_URL + "/{id}", id)
             .retrieve()
-            .onStatus(this::isBadRequest,
-                response -> response.bodyToMono(ApiErrorResponse.class)
-                    .flatMap(errorResponse -> Mono.error(new BadRequestException(
-                        errorResponse.getCode(),
-                        errorResponse.getDescription()
-                    ))))
+            .onStatus(this::isBadRequest, this::handleBadRequest)
             .bodyToMono(ClientResponse.class)
-            .flatMap((response -> {
-                if (response.statusCode().equals(HttpStatus.ALREADY_REPORTED)) {
-                    return response.bodyToMono(ApiErrorResponse.class)
-                        .map(responseBody -> responseBody.getCode() + responseBody.getDescription());
-                }
-                return response.bodyToMono(String.class).map(responseBody -> "Chat is already registered:");
-            }))
+            .flatMap(this::handleRegistrationResponse)
+            .block();
+    }
+
+    public String deleteChat(Integer id) {
+        return client.delete()
+            .uri(TG_CHAT_BASE_URL + "/{id}", id)
+            .retrieve()
+            .onStatus(this::isBadRequest, this::handleBadRequest)
+            .bodyToMono(ClientResponse.class)
+            .flatMap(this::handleDeletingResponse)
+            .block();
+    }
+
+    public ListLinksResponse getLinks(Integer id) {
+        return client.get()
+            .uri(LINKS_BASE_URL)
+            .header(TG_CHAT_ID_HEADER, String.valueOf(id))
+            .retrieve()
+            .onStatus(this::isBadRequest, this::handleBadRequest)
+            .bodyToMono(ListLinksResponse.class)
+            .block();
+    }
+
+    public LinkResponse trackLink(Integer id, @NotNull String link) {
+        AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create(link));
+
+        return client.post()
+            .uri(LINKS_BASE_URL)
+            .header(TG_CHAT_ID_HEADER, String.valueOf(id))
+            .bodyValue(addLinkRequest)
+            .retrieve()
+            .onStatus(this::isBadRequest, this::handleBadRequest)
+            .bodyToMono(LinkResponse.class)
+            //.flatMap()
+            .block();
+    }
+
+    public LinkResponse untrackLink(Integer id, @NotNull String link) {
+        RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(URI.create(link));
+
+        return client.method(HttpMethod.DELETE)
+            .uri(LINKS_BASE_URL)
+            .header(TG_CHAT_ID_HEADER, String.valueOf(id))
+            .bodyValue(BodyInserters.fromValue(removeLinkRequest))
+            .retrieve()
+            .onStatus(this::isBadRequest, this::handleBadRequest)
+            .bodyToMono(LinkResponse.class)
             .block();
     }
 }
