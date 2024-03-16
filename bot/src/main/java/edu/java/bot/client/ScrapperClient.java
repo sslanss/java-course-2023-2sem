@@ -7,6 +7,7 @@ import edu.java.responses.ApiErrorResponse;
 import edu.java.responses.LinkResponse;
 import edu.java.responses.ListLinksResponse;
 import jakarta.validation.constraints.NotNull;
+import java.net.URI;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -14,11 +15,10 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import java.net.URI;
 
 public class ScrapperClient {
     private final WebClient client;
-    private static final String TG_CHAT_BASE_URL = "/tg-chat";
+    private static final String TG_CHAT_BASE_URL = "/tg-chat/{id}";
 
     private static final String LINKS_BASE_URL = "/links";
 
@@ -66,7 +66,7 @@ public class ScrapperClient {
 
     public String registerChat(Integer id) {
         return client.post()
-            .uri(TG_CHAT_BASE_URL + "/{id}", id)
+            .uri(TG_CHAT_BASE_URL, id)
             .retrieve()
             .onStatus(this::isBadRequest, this::handleBadRequest)
             .bodyToMono(ClientResponse.class)
@@ -76,7 +76,7 @@ public class ScrapperClient {
 
     public String deleteChat(Integer id) {
         return client.delete()
-            .uri(TG_CHAT_BASE_URL + "/{id}", id)
+            .uri(TG_CHAT_BASE_URL, id)
             .retrieve()
             .onStatus(this::isBadRequest, this::handleBadRequest)
             .bodyToMono(ClientResponse.class)

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/tg-chat")
 public class TgChatController {
     private final static String BAD_REQUEST_MESSAGE = "Incorrect request parameters";
+
     @PostMapping("/{id}")
     public ResponseEntity<HttpStatus> registerChat(@PathVariable Integer id) {
         if (id == null) {

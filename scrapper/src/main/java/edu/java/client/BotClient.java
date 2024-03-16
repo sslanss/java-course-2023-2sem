@@ -1,15 +1,15 @@
 package edu.java.client;
 
 import edu.java.exceptions.BadRequestException;
-import edu.java.responses.ApiErrorResponse;
 import edu.java.requests.LinkUpdateRequest;
+import edu.java.responses.ApiErrorResponse;
+import java.net.URI;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import java.net.URI;
-import java.util.List;
 
 public class BotClient {
     private final WebClient client;
