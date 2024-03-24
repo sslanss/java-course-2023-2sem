@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LinkResponse {
     @NotNull
-    private Integer id;
+    private Long id;
     @NotEmpty
     @NotBlank
     private URI url;
