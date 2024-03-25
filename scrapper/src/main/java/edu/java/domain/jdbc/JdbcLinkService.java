@@ -15,7 +15,6 @@ import edu.java.responses.ListLinksResponse;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +25,9 @@ public class JdbcLinkService implements LinkService {
     private final ChatRepository chatRepository;
 
     public JdbcLinkService(
-        LinkRepository linkRepository,
-        TrackingRepository trackingRepository,
-        ChatRepository chatRepository
+            LinkRepository linkRepository,
+            TrackingRepository trackingRepository,
+            ChatRepository chatRepository
     ) {
         this.linkRepository = linkRepository;
         this.trackingRepository = trackingRepository;
@@ -39,20 +38,17 @@ public class JdbcLinkService implements LinkService {
     public LinkResponse add(Long tgChatId, URI url) {
         //check case link valid
         Chat followingChat = chatRepository.getById(tgChatId)
-            .orElseThrow(ChatNotFoundException::new);
+                .orElseThrow(ChatNotFoundException::new);
 
-        Link trackedLink;
-        try {
-            trackedLink = linkRepository.getLinkByUrl(url).get();
-        } catch (NoSuchElementException e) {
-            //createLink
-            trackedLink = new Link();
-            trackedLink.setUrl(url);
-            trackedLink.setLastChecked(OffsetDateTime.now());
-            //get generatedKey
-            Long linkId = linkRepository.add(trackedLink);
-            trackedLink.setLinkId(linkId);
-        }
+        Link trackedLink = linkRepository.getLinkByUrl(url)
+                .orElseGet(() -> {
+                    Link newLink = new Link();
+                    newLink.setUrl(url);
+                    newLink.setLastChecked(OffsetDateTime.now());
+                    Long linkId = linkRepository.add(newLink);
+                    newLink.setLinkId(linkId);
+                    return newLink;
+                });
 
         Tracking tracking = new Tracking(trackedLink.getLinkId(), followingChat.getChatId());
         try {
@@ -67,12 +63,12 @@ public class JdbcLinkService implements LinkService {
     @Override
     public LinkResponse remove(Long tgChatId, URI url) {
         Chat followingChat = chatRepository.getById(tgChatId)
-            .orElseThrow(ChatNotFoundException::new);
+                .orElseThrow(ChatNotFoundException::new);
 
         Link untrackedLink = linkRepository.getLinkByUrl(url)
-            .orElseThrow(UntrackedLinkException::new);
+                .orElseThrow(UntrackedLinkException::new);
 
-        if (!trackingRepository.findChatsByDeletedLinkId(untrackedLink.getLinkId())){
+        if (!trackingRepository.findChatsByDeletedLinkId(untrackedLink.getLinkId())) {
             linkRepository.remove(untrackedLink);
         }
 
@@ -91,8 +87,8 @@ public class JdbcLinkService implements LinkService {
 
     private ListLinksResponse mapLinksToListLinks(List<Link> links) {
         List<LinkResponse> linkResponses = links.stream()
-            .map(link -> new LinkResponse(link.getLinkId(), link.getUrl()))
-            .toList();
+                .map(link -> new LinkResponse(link.getLinkId(), link.getUrl()))
+                .toList();
         return new ListLinksResponse(linkResponses, linkResponses.size());
     }
 }
