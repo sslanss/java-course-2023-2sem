@@ -52,7 +52,7 @@ public class JdbcLinkService implements LinkService {
                     return newLink;
                 });
 
-        Tracking tracking = new Tracking(trackedLink.getLinkId(), followingChat.getChatId());
+        Tracking tracking = new Tracking(followingChat.getChatId(),trackedLink.getLinkId());
         try {
             trackingRepository.add(tracking);
         } catch (DataAccessException e) {

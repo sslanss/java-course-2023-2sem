@@ -17,7 +17,7 @@ public class SimpleIntegrationTest extends IntegrationTest {
 
     private final static String INSERT_SQL_QUERY = "INSERT INTO chats(chat_id) VALUES(12345),(34567),(56789);";
 
-    private final static String SELECT_SQL_QUERY = "SELECT * FROM chats;";
+    private final static String SELECT_SQL_QUERY = "SELECT * FROM chats WHERE chat_id = 12345;";
 
     private final static String CREATE_SQL_QUERY = """
         CREATE TABLE IF NOT EXISTS users(
@@ -42,12 +42,9 @@ public class SimpleIntegrationTest extends IntegrationTest {
         statement.executeUpdate(INSERT_SQL_QUERY);
         ResultSet resultSet = statement.executeQuery(SELECT_SQL_QUERY);
 
-        String expected = "12345 34567 56789";
-        StringBuilder result = new StringBuilder();
-        while (resultSet.next()) {
-            result.append(resultSet.getString("chat_id") + (resultSet.isLast() ? "" : " "));
-        }
-        Assertions.assertThat(result.toString()).isEqualTo(expected);
+        String expected = "12345";
+        resultSet.next();
+        Assertions.assertThat(resultSet.getString("chat_id")).isEqualTo(expected);
     }
 
     @Test

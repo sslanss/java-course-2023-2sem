@@ -33,7 +33,8 @@ public class JdbcLinkServiceTest extends IntegrationTest {
     }
 
     @Test
-    @Sql("/sql/insert-into-chats-table.sql")
+    @Sql({"/sql/insert-into-links-table.sql",
+        "/sql/insert-into-chats-table.sql", "/sql/insert-into-trackings-table.sql"})
     public void serviceShouldCorrectlyAddTracking() {
         linkService.add(1L, URI.create(TEST_URI));
 
