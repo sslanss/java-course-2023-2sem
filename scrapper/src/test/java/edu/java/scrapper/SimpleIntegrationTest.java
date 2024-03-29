@@ -15,17 +15,19 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class SimpleIntegrationTest extends IntegrationTest {
     private static DataSource dataSource;
 
-    private final static String INSERT_SQL_QUERY = "INSERT INTO chats(chat_id) VALUES(12345),(34567),(56789);";
+    private final static String INSERT_SQL_QUERY = "INSERT INTO chats(chat_id) VALUES(12345);";
 
     private final static String SELECT_SQL_QUERY = "SELECT * FROM chats WHERE chat_id = 12345;";
 
     private final static String DELETE_SQL_QUERY = "DELETE FROM chats WHERE chat_id = 12345;";
 
-    private final static String CREATE_SQL_QUERY = """
+    private final static String CREATE_TABLE_SQL_QUERY = """
         CREATE TABLE IF NOT EXISTS users(
             user_id BIGINT PRIMARY KEY
         );
         """;
+
+    private final static String DROP_TABLE_SQL_QUERY = "DROP TABLE users";
 
     @BeforeAll
     public static void getDataSource() {
@@ -56,12 +58,14 @@ public class SimpleIntegrationTest extends IntegrationTest {
         Connection connection = dataSource.getConnection();
         Statement statement = connection.createStatement();
 
-        statement.executeUpdate(CREATE_SQL_QUERY);
+        statement.executeUpdate(CREATE_TABLE_SQL_QUERY);
 
         DatabaseMetaData metaData = connection.getMetaData();
         ResultSet tablesResultSet = metaData.getTables(null, null, "users",
             new String[] {"TABLE"}
         );
         assertThat(tablesResultSet.next()).isTrue();
+
+        statement.executeUpdate(DROP_TABLE_SQL_QUERY);
     }
 }
