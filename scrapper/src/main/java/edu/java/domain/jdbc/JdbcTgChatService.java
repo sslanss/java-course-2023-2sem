@@ -7,8 +7,10 @@ import edu.java.exceptions.ChatNotFoundException;
 import edu.java.exceptions.ChatReregisteringException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class JdbcTgChatService implements TgChatService {
 
     private final ChatRepository chatRepository;

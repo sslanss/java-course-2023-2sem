@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -29,7 +30,12 @@ public class ChatRepository {
             SELECT * FROM chats
             WHERE chat_id = ?
             """;
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, CHAT_ROW_MAPPER, id));
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, CHAT_ROW_MAPPER, id));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+        //return Optional.ofNullable(jdbcTemplate.queryForObject(sql, CHAT_ROW_MAPPER, id));
     }
 
     public void add(Chat chat) throws DataAccessException {

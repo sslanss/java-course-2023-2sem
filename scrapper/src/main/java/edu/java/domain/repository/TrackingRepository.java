@@ -71,10 +71,11 @@ public class TrackingRepository {
 
     public boolean findChatsByDeletedLinkId(Long linkId) {
         String sql = """
-                SELECT 1
-                FROM trackings T
-                WHERE link_id = ?
+                SELECT EXISTS ( SELECT 1
+                                 FROM trackings
+                                 WHERE link_id = ?
+                                )
             """;
-        return jdbcTemplate.queryForObject(sql, Boolean.class);
+        return Boolean.FALSE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, linkId));
     }
 }

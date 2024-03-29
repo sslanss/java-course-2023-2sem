@@ -6,9 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -20,6 +21,7 @@ public class LinkRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
+    @SuppressWarnings("MultipleStringLiterals")
     public static final RowMapper<Link> LINK_ROW_MAPPER = (resultSet, rowNumber) -> {
         Link link = new Link();
         link.setLinkId(resultSet.getLong("link_id"));
@@ -37,27 +39,35 @@ public class LinkRepository {
         return jdbcTemplate.query("SELECT * FROM links", LINK_ROW_MAPPER);
     }
 
-    public Optional<Link> getLinkById(Long id) {
-        String sqlSelect = """
-            SELECT * FROM links
-            WHERE id = ?
-            """;
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sqlSelect, LINK_ROW_MAPPER, id));
+    public Optional<Link> getById(Long id) {
+        String sql = """
+                SELECT * FROM links
+                WHERE link_id = ?
+                """;
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, LINK_ROW_MAPPER, id));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
-    public Optional<Link> getLinkByUrl(URI url) {
+    public Optional<Link> getByUrl(URI url) {
         String sql = """
-            SELECT * FROM links
-            WHERE url = ?
-            """;
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, LINK_ROW_MAPPER, url));
+                SELECT * FROM links
+                WHERE url = ?
+                """;
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, LINK_ROW_MAPPER, url.toString()));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
-    public Long add(Link link) {
+    public Long add(Link link) throws DataAccessException {
         String sql = """
-            INSERT INTO links (url, last_checked_at)
-            VALUES (?, ?)
-            """;
+                INSERT INTO links (url, last_checked_at)
+                VALUES (?, ?)
+                """;
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -66,22 +76,22 @@ public class LinkRepository {
             ps.setObject(2, link.getLastChecked());
             return ps;
         }, keyHolder);
-        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+        return (Long) keyHolder.getKeyList().getFirst().get("link_id");
     }
 
     public void remove(Link link) {
         String sql = """
-            DELETE FROM links
-            WHERE link_id = ?
-            """;
+                DELETE FROM links
+                WHERE link_id = ?
+                """;
         jdbcTemplate.update(sql, link.getLinkId());
     }
 
     public List<Link> findOldestLastChecked() {
         String sql = """
-            SELECT FROM links
-            WHERE last_checked_at =
-            """;
+                SELECT FROM links
+                WHERE last_checked_at =
+                """;
         return null;
     }
 

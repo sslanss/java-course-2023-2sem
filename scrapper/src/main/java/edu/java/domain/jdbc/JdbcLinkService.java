@@ -17,8 +17,10 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class JdbcLinkService implements LinkService {
     private final LinkRepository linkRepository;
     private final TrackingRepository trackingRepository;
@@ -40,7 +42,7 @@ public class JdbcLinkService implements LinkService {
         Chat followingChat = chatRepository.getById(tgChatId)
                 .orElseThrow(ChatNotFoundException::new);
 
-        Link trackedLink = linkRepository.getLinkByUrl(url)
+        Link trackedLink = linkRepository.getByUrl(url)
                 .orElseGet(() -> {
                     Link newLink = new Link();
                     newLink.setUrl(url);
@@ -65,7 +67,7 @@ public class JdbcLinkService implements LinkService {
         Chat followingChat = chatRepository.getById(tgChatId)
                 .orElseThrow(ChatNotFoundException::new);
 
-        Link untrackedLink = linkRepository.getLinkByUrl(url)
+        Link untrackedLink = linkRepository.getByUrl(url)
                 .orElseThrow(UntrackedLinkException::new);
 
         if (!trackingRepository.findChatsByDeletedLinkId(untrackedLink.getLinkId())) {

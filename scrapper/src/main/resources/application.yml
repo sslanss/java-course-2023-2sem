@@ -5,8 +5,15 @@ app:
     force-check-delay: 10s
 
 spring:
+  liquibase:
+    enabled: false
   application:
     name: scrapper
+  datasource:
+    url: jdbc:postgresql://localhost:5432/scrapper
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
 
 server:
   port: 8080
