@@ -19,6 +19,8 @@ public class SimpleIntegrationTest extends IntegrationTest {
 
     private final static String SELECT_SQL_QUERY = "SELECT * FROM chats WHERE chat_id = 12345;";
 
+    private final static String DELETE_SQL_QUERY = "DELETE FROM chats WHERE chat_id = 12345;";
+
     private final static String CREATE_SQL_QUERY = """
         CREATE TABLE IF NOT EXISTS users(
             user_id BIGINT PRIMARY KEY
@@ -45,6 +47,8 @@ public class SimpleIntegrationTest extends IntegrationTest {
         String expected = "12345";
         resultSet.next();
         Assertions.assertThat(resultSet.getString("chat_id")).isEqualTo(expected);
+
+        statement.executeUpdate(DELETE_SQL_QUERY);
     }
 
     @Test

@@ -1,8 +1,5 @@
 package edu.java.configuration;
 
-import edu.java.domain.repository.ChatRepository;
-import edu.java.domain.repository.LinkRepository;
-import edu.java.domain.repository.TrackingRepository;
 import jakarta.validation.constraints.NotNull;
 import javax.sql.DataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
