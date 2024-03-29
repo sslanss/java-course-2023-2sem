@@ -112,8 +112,8 @@ public class TrackingRepositoryTest implements IntegrationTest {
     @Sql({"/sql/insert-with-ids-into-links-table.sql",
         "/sql/insert-into-chats-table.sql", "/sql/insert-into-trackings-table.sql"})
     public void repositoryShouldCorrectlyCheckIfLinkCouldBeDeleted() {
-        assertThat(trackingRepository.findChatsByDeletedLinkId(3L)).isTrue();
-        assertThat(trackingRepository.findChatsByDeletedLinkId(2L)).isFalse();
+        assertThat(trackingRepository.findChatsByDeletedLinkId(3L)).isFalse();
+        assertThat(trackingRepository.findChatsByDeletedLinkId(2L)).isTrue();
 
     }
 

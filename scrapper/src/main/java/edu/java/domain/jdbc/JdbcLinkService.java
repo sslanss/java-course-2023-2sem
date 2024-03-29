@@ -70,13 +70,13 @@ public class JdbcLinkService implements LinkService {
         Link untrackedLink = linkRepository.getByUrl(url)
                 .orElseThrow(UntrackedLinkException::new);
 
-        if (!trackingRepository.findChatsByDeletedLinkId(untrackedLink.getLinkId())) {
-            linkRepository.remove(untrackedLink);
-        }
-
         Tracking tracking = new Tracking(followingChat.getChatId(), untrackedLink.getLinkId());
         if (!trackingRepository.remove(tracking)) {
             throw new UntrackedLinkException();
+        }
+
+        if (!trackingRepository.findChatsByDeletedLinkId(untrackedLink.getLinkId())) {
+            linkRepository.remove(untrackedLink);
         }
 
         return new LinkResponse(untrackedLink.getLinkId(), untrackedLink.getUrl());

@@ -76,6 +76,6 @@ public class TrackingRepository {
                                  WHERE link_id = ?
                                 )
             """;
-        return Boolean.FALSE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, linkId));
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class, linkId));
     }
 }

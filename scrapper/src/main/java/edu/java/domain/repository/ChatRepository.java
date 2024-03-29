@@ -35,7 +35,6 @@ public class ChatRepository {
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
-        //return Optional.ofNullable(jdbcTemplate.queryForObject(sql, CHAT_ROW_MAPPER, id));
     }
 
     public void add(Chat chat) throws DataAccessException {

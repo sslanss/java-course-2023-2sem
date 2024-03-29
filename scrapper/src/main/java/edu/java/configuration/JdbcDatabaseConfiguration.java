@@ -29,19 +29,4 @@ public record JdbcDatabaseConfiguration(@NotNull String driverClassName, @NotNul
     public JdbcTemplate getJdbcTemplate() {
         return new JdbcTemplate(getDataSource());
     }
-
-    @Bean
-    public ChatRepository chatRepository(JdbcTemplate jdbcTemplate) {
-        return new ChatRepository(jdbcTemplate);
-    }
-
-    @Bean
-    public LinkRepository linkRepository(JdbcTemplate jdbcTemplate) {
-        return new LinkRepository(jdbcTemplate);
-    }
-
-    @Bean
-    public TrackingRepository trackingRepository(JdbcTemplate jdbcTemplate) {
-        return new TrackingRepository(jdbcTemplate);
-    }
 }
