@@ -1,4 +1,4 @@
 package edu.java.exceptions;
 
-public class BadRequestException {
+public class BadRequestException extends RuntimeException {
 }
