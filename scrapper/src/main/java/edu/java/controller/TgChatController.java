@@ -1,7 +1,7 @@
 package edu.java.controller;
 
+import edu.java.api_exceptions.BadRequestException;
 import edu.java.domain.service.TgChatService;
-import edu.java.exceptions.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

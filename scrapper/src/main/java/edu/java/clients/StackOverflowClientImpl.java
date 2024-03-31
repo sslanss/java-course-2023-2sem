@@ -1,7 +1,7 @@
 package edu.java.clients;
 
+import edu.java.api_exceptions.BadRequestException;
 import edu.java.exceptions.ApiErrorException;
-import edu.java.exceptions.BadRequestException;
 import edu.java.exceptions.TooManyRequestsException;
 import edu.java.responses.StackOverflowResponse;
 import java.time.OffsetDateTime;

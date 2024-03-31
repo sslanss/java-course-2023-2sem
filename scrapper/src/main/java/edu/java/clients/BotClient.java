@@ -1,6 +1,6 @@
-package edu.java.client;
+package edu.java.clients;
 
-import edu.java.exceptions.BadRequestException;
+import edu.java.api_exceptions.BadRequestException;
 import edu.java.requests.LinkUpdateRequest;
 import edu.java.responses.ApiErrorResponse;
 import java.net.URI;

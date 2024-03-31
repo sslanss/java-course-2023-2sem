@@ -1,6 +1,6 @@
 package edu.java.bot.controller;
 
-import edu.java.exceptions.BadRequestException;
+import edu.java.api_exceptions.BadRequestException;
 import edu.java.responses.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

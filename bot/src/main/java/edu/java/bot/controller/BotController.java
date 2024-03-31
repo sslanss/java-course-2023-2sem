@@ -1,6 +1,6 @@
 package edu.java.bot.controller;
 
-import edu.java.exceptions.BadRequestException;
+import edu.java.api_exceptions.BadRequestException;
 import edu.java.requests.LinkUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;

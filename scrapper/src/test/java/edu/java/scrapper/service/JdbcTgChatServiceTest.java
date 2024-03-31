@@ -1,8 +1,8 @@
 package edu.java.scrapper.service;
 
 import edu.java.domain.service.TgChatService;
-import edu.java.exceptions.ChatNotFoundException;
-import edu.java.exceptions.ChatReregisteringException;
+import edu.java.exceptions.tracker_exceptions.ChatNotFoundException;
+import edu.java.exceptions.tracker_exceptions.ChatReregisteringException;
 import edu.java.scrapper.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

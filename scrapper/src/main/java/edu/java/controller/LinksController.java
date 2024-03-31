@@ -1,7 +1,7 @@
 package edu.java.controller;
 
+import edu.java.api_exceptions.BadRequestException;
 import edu.java.domain.service.LinkService;
-import edu.java.exceptions.BadRequestException;
 import edu.java.requests.AddLinkRequest;
 import edu.java.requests.RemoveLinkRequest;
 import edu.java.responses.LinkResponse;

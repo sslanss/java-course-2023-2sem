@@ -1,10 +1,10 @@
 package edu.java.controller;
 
-import edu.java.exceptions.AlreadyTrackedLinkException;
-import edu.java.exceptions.BadRequestException;
-import edu.java.exceptions.ChatNotFoundException;
-import edu.java.exceptions.ChatReregisteringException;
-import edu.java.exceptions.UntrackedLinkException;
+import edu.java.api_exceptions.BadRequestException;
+import edu.java.exceptions.tracker_exceptions.AlreadyTrackedLinkException;
+import edu.java.exceptions.tracker_exceptions.ChatNotFoundException;
+import edu.java.exceptions.tracker_exceptions.ChatReregisteringException;
+import edu.java.exceptions.tracker_exceptions.UntrackedLinkException;
 import edu.java.responses.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

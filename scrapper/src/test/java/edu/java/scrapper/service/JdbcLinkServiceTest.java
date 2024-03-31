@@ -1,9 +1,9 @@
 package edu.java.scrapper.service;
 
 import edu.java.domain.service.LinkService;
-import edu.java.exceptions.AlreadyTrackedLinkException;
-import edu.java.exceptions.ChatNotFoundException;
-import edu.java.exceptions.UntrackedLinkException;
+import edu.java.exceptions.tracker_exceptions.AlreadyTrackedLinkException;
+import edu.java.exceptions.tracker_exceptions.ChatNotFoundException;
+import edu.java.exceptions.tracker_exceptions.UntrackedLinkException;
 import edu.java.scrapper.IntegrationTest;
 import java.net.URI;
 import org.junit.jupiter.api.Test;
