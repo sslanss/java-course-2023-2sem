@@ -17,15 +17,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 public class ScrapperClient {
-    private final WebClient client;
+    private final WebClient webClient;
     private static final String TG_CHAT_BASE_URL = "/tg-chat/{id}";
 
     private static final String LINKS_BASE_URL = "/links";
 
     public static final String TG_CHAT_ID_HEADER = "Tg-Chat-Id";
 
-    public ScrapperClient(WebClient client) {
-        this.client = client;
+    private static final String BASE_URL = "http://localhost:8080";
+
+    public ScrapperClient() {
+        webClient = WebClient.builder().baseUrl(BASE_URL).build();
     }
 
     private boolean isBadRequest(HttpStatusCode httpStatusCode) {
@@ -65,7 +67,7 @@ public class ScrapperClient {
     }
 
     public String registerChat(Integer id) {
-        return client.post()
+        return webClient.post()
             .uri(TG_CHAT_BASE_URL, id)
             .retrieve()
             .onStatus(this::isBadRequest, this::handleBadRequest)
@@ -75,7 +77,7 @@ public class ScrapperClient {
     }
 
     public String deleteChat(Integer id) {
-        return client.delete()
+        return webClient.delete()
             .uri(TG_CHAT_BASE_URL, id)
             .retrieve()
             .onStatus(this::isBadRequest, this::handleBadRequest)
@@ -85,7 +87,7 @@ public class ScrapperClient {
     }
 
     public ListLinksResponse getLinks(Integer id) {
-        return client.get()
+        return webClient.get()
             .uri(LINKS_BASE_URL)
             .header(TG_CHAT_ID_HEADER, String.valueOf(id))
             .retrieve()
@@ -97,7 +99,7 @@ public class ScrapperClient {
     public LinkResponse trackLink(Integer id, @NotNull String link) {
         AddLinkRequest addLinkRequest = new AddLinkRequest(URI.create(link));
 
-        return client.post()
+        return webClient.post()
             .uri(LINKS_BASE_URL)
             .header(TG_CHAT_ID_HEADER, String.valueOf(id))
             .bodyValue(addLinkRequest)
@@ -111,7 +113,7 @@ public class ScrapperClient {
     public LinkResponse untrackLink(Integer id, @NotNull String link) {
         RemoveLinkRequest removeLinkRequest = new RemoveLinkRequest(URI.create(link));
 
-        return client.method(HttpMethod.DELETE)
+        return webClient.method(HttpMethod.DELETE)
             .uri(LINKS_BASE_URL)
             .header(TG_CHAT_ID_HEADER, String.valueOf(id))
             .bodyValue(BodyInserters.fromValue(removeLinkRequest))

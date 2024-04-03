@@ -1,10 +1,13 @@
 package edu.java.domain.jdbc;
 
 import edu.java.domain.model.Chat;
+import edu.java.domain.model.Link;
 import edu.java.domain.repository.ChatRepository;
+import edu.java.domain.repository.TrackingRepository;
 import edu.java.domain.service.TgChatService;
 import edu.java.exceptions.tracker_exceptions.ChatNotFoundException;
 import edu.java.exceptions.tracker_exceptions.ChatReregisteringException;
+import java.util.List;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,8 +18,11 @@ public class JdbcTgChatService implements TgChatService {
 
     private final ChatRepository chatRepository;
 
-    public JdbcTgChatService(ChatRepository chatRepository) {
+    private final TrackingRepository trackingRepository;
+
+    public JdbcTgChatService(ChatRepository chatRepository, TrackingRepository trackingRepository) {
         this.chatRepository = chatRepository;
+        this.trackingRepository = trackingRepository;
     }
 
     @Override
@@ -35,5 +41,10 @@ public class JdbcTgChatService implements TgChatService {
         if (!chatRepository.remove(unregisteringChat)) {
             throw new ChatNotFoundException();
         }
+    }
+
+    @Override
+    public List<Chat> listTrackingChats(Link link) {
+        return trackingRepository.getChatsByLinkId(link.getLinkId());
     }
 }

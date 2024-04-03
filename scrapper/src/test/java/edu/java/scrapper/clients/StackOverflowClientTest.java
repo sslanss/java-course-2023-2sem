@@ -1,8 +1,8 @@
 package edu.java.scrapper.clients;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import edu.java.clients.StackOverflowClient;
-import edu.java.clients.StackOverflowClientImpl;
+import edu.java.clients.stackoverflow.StackOverflowClient;
+import edu.java.clients.stackoverflow.StackOverflowClientImpl;
 import edu.java.responses.StackOverflowResponse;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class StackOverflowClientTest extends AbstractClientTest {
         }};
         List<StackOverflowResponse.StackOverflowAnswerInfo> response = stackOverflowClient.getQuestionUpdate(
             1L,
-            OffsetDateTime.parse("2024-03-07T08:06:40Z")
+            OffsetDateTime.parse("2024-03-07T08:06:40Z"), OffsetDateTime.now()
         ).items();
 
         Assertions.assertThat(response).isEqualTo(expected);

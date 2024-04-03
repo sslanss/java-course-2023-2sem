@@ -12,20 +12,22 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 public class BotClient {
-    private final WebClient client;
+    private final WebClient webClient;
 
-    public BotClient(WebClient client) {
-        this.client = client;
+    private static final String BASE_URL = "http://localhost:8090";
+
+    public BotClient() {
+        webClient = WebClient.builder().baseUrl(BASE_URL).build();
     }
 
     private boolean isBadRequest(HttpStatusCode httpStatusCode) {
         return httpStatusCode.equals(HttpStatus.BAD_REQUEST);
     }
 
-    public void sendLinkUpdate(Long id, String url, String description, List<Long> tgChatIds) {
-        LinkUpdateRequest linkUpdate = new LinkUpdateRequest(id, URI.create(url), description, tgChatIds);
+    public void sendLinkUpdate(Long id, URI url, String description, List<Long> tgChatIds) {
+        LinkUpdateRequest linkUpdate = new LinkUpdateRequest(id, url, description, tgChatIds);
 
-        client.post()
+        webClient.post()
             .uri("/updates")
             .body(BodyInserters.fromValue(linkUpdate))
             .retrieve()

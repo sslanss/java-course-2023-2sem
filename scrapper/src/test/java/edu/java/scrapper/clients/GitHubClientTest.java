@@ -1,8 +1,8 @@
 package edu.java.scrapper.clients;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import edu.java.clients.GitHubClient;
-import edu.java.clients.GitHubClientImpl;
+import edu.java.clients.github.GitHubClient;
+import edu.java.clients.github.GitHubClientImpl;
 import edu.java.responses.GitHubResponse;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -59,8 +59,7 @@ public class GitHubClientTest extends AbstractClientTest {
             "test-repository",
             OffsetDateTime.of(LocalDate.of(2024, 2, 27),
                 LocalTime.of(21, 2, 35), ZoneOffset.UTC
-            )
-        );
+            ),OffsetDateTime.now());
 
         Assertions.assertThat(actual).isEqualTo(expected);
     }

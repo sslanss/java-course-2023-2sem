@@ -1,4 +1,4 @@
-package edu.java.clients;
+package edu.java.clients.github;
 
 import edu.java.responses.GitHubResponse;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +9,7 @@ public interface GitHubClient {
     List<GitHubResponse> getRepositoryUpdate(
         @NotNull String owner,
         @NotNull String repository,
-        @NotNull OffsetDateTime lastChecked
+        @NotNull OffsetDateTime fromDate,
+        @NotNull OffsetDateTime toDate
     );
 }

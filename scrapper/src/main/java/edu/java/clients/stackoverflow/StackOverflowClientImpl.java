@@ -1,4 +1,4 @@
-package edu.java.clients;
+package edu.java.clients.stackoverflow;
 
 import edu.java.api_exceptions.BadRequestException;
 import edu.java.exceptions.ApiErrorException;
@@ -39,12 +39,16 @@ public class StackOverflowClientImpl implements StackOverflowClient {
     }
 
     @Override
-    public StackOverflowResponse getQuestionUpdate(long questionId, @NotNull OffsetDateTime lastChecked) {
+    public StackOverflowResponse getQuestionUpdate(
+        long questionId, @NotNull OffsetDateTime fromDate,
+        OffsetDateTime toDate
+    ) {
         return webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .path("questions/{ids}/answers")
                 .queryParam("site", "stackoverflow")
-                .queryParam("fromdate", lastChecked.toEpochSecond())
+                .queryParam("fromdate", fromDate.toEpochSecond())
+                .queryParam("todate", toDate.toEpochSecond())
                 .queryParam("sort", "creation")
                 .queryParam("order", "desc")
                 .build(questionId))

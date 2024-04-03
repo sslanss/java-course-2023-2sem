@@ -87,12 +87,22 @@ public class LinkRepository {
         jdbcTemplate.update(sql, link.getLinkId());
     }
 
-    public List<Link> findOldestLastChecked() {
+    public List<Link> findLongestUnchecked(int count) {
         String sql = """
-                SELECT FROM links
-                WHERE last_checked_at =
+                SELECT * FROM links
+                ORDER BY last_check_time ASC
+                LIMIT ?
                 """;
-        return null;
+        return jdbcTemplate.query(sql, LINK_ROW_MAPPER, count);
+    }
+
+    public void updateLastChecked(Link link) {
+        String sql = """
+                UPDATE links
+                SET last_checked_at = ?
+                WHERE url = ?
+                """;
+        jdbcTemplate.update(sql, link.getLastChecked(), link.getUrl());
     }
 
 }

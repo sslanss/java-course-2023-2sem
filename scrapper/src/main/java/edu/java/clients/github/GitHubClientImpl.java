@@ -1,4 +1,4 @@
-package edu.java.clients;
+package edu.java.clients.github;
 
 import edu.java.api_exceptions.BadRequestException;
 import edu.java.exceptions.ApiErrorException;
@@ -41,7 +41,8 @@ public class GitHubClientImpl implements GitHubClient {
     @Override
     public List<GitHubResponse> getRepositoryUpdate(
         @NotNull String owner, @NotNull String repository,
-        @NotNull OffsetDateTime lastChecked
+        @NotNull OffsetDateTime fromDate,
+        @NotNull OffsetDateTime toDate
     ) {
         return webClient.get()
             .uri(uriBuilder -> uriBuilder.path("repos/{owner}/{repo}/activity")
@@ -49,7 +50,8 @@ public class GitHubClientImpl implements GitHubClient {
                 .build(owner, repository))
             .retrieve()
             .bodyToFlux(GitHubResponse.class)
-            .filter(gitHubResponse -> gitHubResponse.lastModified().isAfter(lastChecked))
+            .filter(gitHubResponse -> gitHubResponse.lastModified().isAfter(fromDate)
+                && (gitHubResponse.lastModified().isBefore(toDate) || gitHubResponse.lastModified().isEqual(toDate)))
             .switchIfEmpty(Flux.empty())
             .collectList()
             .block();
