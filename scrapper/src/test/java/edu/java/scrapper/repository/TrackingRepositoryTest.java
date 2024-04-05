@@ -4,6 +4,7 @@ import edu.java.domain.model.Chat;
 import edu.java.domain.model.Link;
 import edu.java.domain.model.Tracking;
 import edu.java.domain.repository.TrackingRepository;
+import edu.java.scrapper.IntegrationTest;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -12,7 +13,6 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.kafka.test.IntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Transactional
 @Rollback
 @Testcontainers
-public class TrackingRepositoryTest implements IntegrationTest {
+public class TrackingRepositoryTest extends IntegrationTest {
     @Autowired
     private TrackingRepository trackingRepository;
 
