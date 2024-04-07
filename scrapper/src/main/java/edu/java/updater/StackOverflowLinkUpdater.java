@@ -3,7 +3,7 @@ package edu.java.updater;
 import edu.java.api_exceptions.BadRequestException;
 import edu.java.clients.BotClient;
 import edu.java.clients.stackoverflow.StackOverflowClient;
-import edu.java.domain.model.Link;
+import edu.java.domain.model.jdbc.Link;
 import edu.java.exceptions.ApiErrorException;
 import edu.java.exceptions.TooManyRequestsException;
 import edu.java.responses.StackOverflowResponse;

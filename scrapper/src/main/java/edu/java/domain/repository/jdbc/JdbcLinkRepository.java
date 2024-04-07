@@ -1,4 +1,4 @@
-package edu.java.domain.repository;
+package edu.java.domain.repository.jdbc;
 
 import edu.java.domain.model.jdbc.Link;
 import java.net.URI;
@@ -17,7 +17,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class LinkRepository {
+public class JdbcLinkRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -31,7 +31,7 @@ public class LinkRepository {
     };
 
     @Autowired
-    public LinkRepository(JdbcTemplate jdbcTemplate) {
+    public JdbcLinkRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

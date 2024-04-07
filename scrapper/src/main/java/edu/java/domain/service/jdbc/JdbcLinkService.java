@@ -1,4 +1,4 @@
-package edu.java.domain.jdbc;
+package edu.java.domain.service.jdbc;
 
 import edu.java.domain.model.jdbc.Chat;
 import edu.java.domain.model.jdbc.Link;
@@ -9,17 +9,17 @@ import edu.java.domain.repository.jdbc.JdbcTrackingRepository;
 import edu.java.domain.service.LinkService;
 import edu.java.exceptions.tracker_exceptions.AlreadyTrackedLinkException;
 import edu.java.exceptions.tracker_exceptions.ChatNotFoundException;
+import edu.java.exceptions.tracker_exceptions.UnsupportedLinkFormatException;
 import edu.java.exceptions.tracker_exceptions.UntrackedLinkException;
 import edu.java.responses.LinkResponse;
 import edu.java.responses.ListLinksResponse;
+import edu.java.util.LinkValidator;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 @Transactional
 public class JdbcLinkService implements LinkService {
     private final JdbcLinkRepository jdbcLinkRepository;
@@ -39,12 +39,15 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     public LinkResponse add(Long tgChatId, URI url) {
-        //check case link valid
         Chat followingChat = jdbcChatRepository.getById(tgChatId)
             .orElseThrow(ChatNotFoundException::new);
 
         Link trackedLink = jdbcLinkRepository.getByUrl(url)
             .orElseGet(() -> {
+                if (!LinkValidator.isLinkValid(url)) {
+                    throw new UnsupportedLinkFormatException();
+                }
+
                 Link newLink = new Link();
                 newLink.setUrl(url);
                 newLink.setLastChecked(OffsetDateTime.now());
@@ -85,6 +88,9 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     public ListLinksResponse listAllTrackedLinks(Long tgChatId) {
+        Chat followingChat = jdbcChatRepository.getById(tgChatId)
+            .orElseThrow(ChatNotFoundException::new);
+
         return mapLinksToListLinks(jdbcTrackingRepository.getLinksByChatId(tgChatId));
     }
 

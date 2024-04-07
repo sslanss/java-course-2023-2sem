@@ -1,4 +1,4 @@
-package edu.java.domain.repository;
+package edu.java.domain.repository.jdbc;
 
 import edu.java.domain.model.jdbc.Chat;
 import java.util.List;
@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ChatRepository {
+public class JdbcChatRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public static final RowMapper<Chat> CHAT_ROW_MAPPER = (resultSet, rowNumber) -> {
@@ -21,7 +21,7 @@ public class ChatRepository {
     };
 
     @Autowired
-    public ChatRepository(JdbcTemplate jdbcTemplate) {
+    public JdbcChatRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

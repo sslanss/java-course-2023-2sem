@@ -4,6 +4,7 @@ import edu.java.api_exceptions.BadRequestException;
 import edu.java.exceptions.tracker_exceptions.AlreadyTrackedLinkException;
 import edu.java.exceptions.tracker_exceptions.ChatNotFoundException;
 import edu.java.exceptions.tracker_exceptions.ChatReregisteringException;
+import edu.java.exceptions.tracker_exceptions.UnsupportedLinkFormatException;
 import edu.java.exceptions.tracker_exceptions.UntrackedLinkException;
 import edu.java.responses.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,15 @@ public class ScrapperControllerAdvice {
             HttpStatus.NOT_FOUND.toString(), e.getClass().getName(), null, null
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(errorResponse);
+    }
+
+    @ExceptionHandler(UnsupportedLinkFormatException.class)
+    public ResponseEntity<ApiErrorResponse> handleLinkFormatIsNotSupported(UnsupportedLinkFormatException e) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse("Link format is not supported",
+            HttpStatus.UNSUPPORTED_MEDIA_TYPE.toString(), e.getClass().getName(), null, null
+        );
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
             .body(errorResponse);
     }
 

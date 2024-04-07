@@ -1,4 +1,4 @@
-package edu.java.scrapper.service;
+package edu.java.scrapper.domain.service.jdbc;
 
 import edu.java.domain.service.TgChatService;
 import edu.java.exceptions.tracker_exceptions.ChatNotFoundException;

@@ -10,8 +10,8 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "spring.datasource", ignoreUnknownFields = false)
-public record JdbcDatabaseConfiguration(@NotNull String driverClassName, @NotNull String url, @NotNull String username,
-                                        @NotNull String password) {
+public record JdbcDatabaseConfig(@NotNull String driverClassName, @NotNull String url, @NotNull String username,
+                                 @NotNull String password) {
     @Bean
     public DataSource getDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();

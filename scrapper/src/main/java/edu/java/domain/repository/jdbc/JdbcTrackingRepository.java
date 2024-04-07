@@ -1,4 +1,4 @@
-package edu.java.domain.repository;
+package edu.java.domain.repository.jdbc;
 
 import edu.java.domain.model.jdbc.Chat;
 import edu.java.domain.model.jdbc.Link;
@@ -9,11 +9,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import static edu.java.domain.repository.ChatRepository.CHAT_ROW_MAPPER;
-import static edu.java.domain.repository.LinkRepository.LINK_ROW_MAPPER;
+import static edu.java.domain.repository.jdbc.JdbcChatRepository.CHAT_ROW_MAPPER;
+import static edu.java.domain.repository.jdbc.JdbcLinkRepository.LINK_ROW_MAPPER;
 
 @Repository
-public class TrackingRepository {
+public class JdbcTrackingRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -25,7 +25,7 @@ public class TrackingRepository {
     };
 
     @Autowired
-    public TrackingRepository(JdbcTemplate jdbcTemplate) {
+    public JdbcTrackingRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

@@ -1,4 +1,4 @@
-package edu.java.scrapper.service;
+package edu.java.scrapper.domain.service.jdbc;
 
 import edu.java.domain.service.LinkService;
 import edu.java.exceptions.tracker_exceptions.AlreadyTrackedLinkException;
@@ -23,6 +23,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 public class JdbcLinkServiceTest extends IntegrationTest {
     @Autowired
     private LinkService linkService;
+
     private static final String TEST_URI = "https://github.com/test-user/test-repo";
 
     @Test
@@ -31,14 +32,19 @@ public class JdbcLinkServiceTest extends IntegrationTest {
     public void serviceShouldCorrectlyGetTracking() {
         assertThat(linkService.listAllTrackedLinks(2L).getLinks().size()).isEqualTo(2);
 
-        assertThat(linkService.listAllTrackedLinks(32L).getLinks().size()).isEqualTo(0);
+        assertThat(linkService.listAllTrackedLinks(33L).getLinks().size()).isEqualTo(0);
+
+        assertThatThrownBy(() -> linkService.listAllTrackedLinks(32L))
+            .isInstanceOf(ChatNotFoundException.class);
     }
+
 
     @Test
     @Sql({"/sql/insert-into-links-table.sql",
         "/sql/insert-into-chats-table.sql", "/sql/insert-into-trackings-table.sql"})
     public void serviceShouldCorrectlyAddTracking() {
         linkService.add(1L, URI.create(TEST_URI));
+        linkService.add(2L, URI.create(TEST_URI));
 
         assertThatThrownBy(() -> linkService.add(34L, URI.create(TEST_URI)))
             .isInstanceOf(ChatNotFoundException.class);
@@ -53,6 +59,7 @@ public class JdbcLinkServiceTest extends IntegrationTest {
         "/sql/insert-into-chats-table.sql", "/sql/insert-into-trackings-table.sql"})
     public void serviceShouldCorrectlyRemoveTracking() {
         linkService.remove(1L, URI.create("https://github.com/sslanss/java-course-2023-2sem"));
+        linkService.remove(2L, URI.create("https://github.com/sslanss/java-course-2023-2sem"));
 
         assertThatThrownBy(() -> linkService.remove(34L, URI.create(TEST_URI)))
             .isInstanceOf(ChatNotFoundException.class);

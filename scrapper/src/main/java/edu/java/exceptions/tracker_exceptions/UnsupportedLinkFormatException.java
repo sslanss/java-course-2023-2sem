@@ -1,2 +1,4 @@
-package edu.java.exceptions.tracker_exceptions;public class UnsupportedLinkFormatException {
+package edu.java.exceptions.tracker_exceptions;
+
+public class UnsupportedLinkFormatException extends RuntimeException {
 }

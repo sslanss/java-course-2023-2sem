@@ -1,4 +1,4 @@
-package edu.java.domain.jdbc;
+package edu.java.domain.service.jdbc;
 
 import edu.java.domain.model.jdbc.Chat;
 import edu.java.domain.model.jdbc.Link;
@@ -8,11 +8,8 @@ import edu.java.domain.service.TgChatService;
 import edu.java.exceptions.tracker_exceptions.ChatNotFoundException;
 import edu.java.exceptions.tracker_exceptions.ChatReregisteringException;
 import java.util.List;
-import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 @Transactional
 public class JdbcTgChatService implements TgChatService {
 
@@ -27,12 +24,12 @@ public class JdbcTgChatService implements TgChatService {
 
     @Override
     public void register(Long tgChatId) {
-        Chat registeringChat = new Chat(tgChatId);
-        try {
-            jdbcChatRepository.add(registeringChat);
-        } catch (DataAccessException e) {
+        if (jdbcChatRepository.getById(tgChatId).isPresent()) {
             throw new ChatReregisteringException();
         }
+
+        Chat registeringChat = new Chat(tgChatId);
+        jdbcChatRepository.add(registeringChat);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package edu.java.scrapper.repository.jdbc;
+package edu.java.scrapper.domain.repository.jdbc;
 
 import edu.java.domain.model.jdbc.Link;
 import edu.java.domain.repository.jdbc.JdbcLinkRepository;
@@ -22,7 +22,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
+@SpringBootTest(properties = "app.database-access-type=jdbc")
 @Transactional
 @Rollback
 @Testcontainers
