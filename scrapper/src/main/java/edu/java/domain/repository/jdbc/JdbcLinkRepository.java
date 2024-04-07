@@ -1,6 +1,6 @@
 package edu.java.domain.repository;
 
-import edu.java.domain.model.Link;
+import edu.java.domain.model.jdbc.Link;
 import java.net.URI;
 import java.sql.PreparedStatement;
 import java.sql.Statement;

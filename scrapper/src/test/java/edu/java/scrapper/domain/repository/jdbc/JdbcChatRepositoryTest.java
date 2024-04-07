@@ -1,7 +1,7 @@
-package edu.java.scrapper.repository;
+package edu.java.scrapper.repository.jdbc;
 
-import edu.java.domain.model.Chat;
-import edu.java.domain.repository.ChatRepository;
+import edu.java.domain.model.jdbc.Chat;
+import edu.java.domain.repository.jdbc.JdbcChatRepository;
 import edu.java.scrapper.IntegrationTest;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +21,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 @Rollback
 @Testcontainers
-public class ChatRepositoryTest extends IntegrationTest {
+public class JdbcChatRepositoryTest extends IntegrationTest {
     @Autowired
-    private ChatRepository chatRepository;
+    private JdbcChatRepository jdbcChatRepository;
 
     private final static List<Chat> expected = new ArrayList<>() {{
         add(new Chat(1L));
@@ -35,39 +35,39 @@ public class ChatRepositoryTest extends IntegrationTest {
     @Test
     @Sql("/sql/insert-into-chats-table.sql")
     public void repositoryShouldCorrectlyGetConvertedTableContent() {
-        assertThat(chatRepository.findAll()).containsExactlyElementsOf(expected);
+        assertThat(jdbcChatRepository.findAll()).containsExactlyElementsOf(expected);
     }
 
     @Test
     @Sql("/sql/insert-into-chats-table.sql")
     public void repositoryShouldCorrectlyAddContentToTable() {
         Chat createdChat = new Chat(22L);
-        chatRepository.add(createdChat);
-        assertThat(chatRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
+        jdbcChatRepository.add(createdChat);
+        assertThat(jdbcChatRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
             add(createdChat);
         }});
 
-        assertThatThrownBy(() -> chatRepository.add(createdChat)).isInstanceOf(DataAccessException.class);
+        assertThatThrownBy(() -> jdbcChatRepository.add(createdChat)).isInstanceOf(DataAccessException.class);
     }
 
     @Test
     @Sql("/sql/insert-into-chats-table.sql")
     public void repositoryShouldCorrectlyRemoveContentFromTable() {
         Chat removingChat = new Chat(2L);
-        chatRepository.remove(removingChat);
-        assertThat(chatRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
+        jdbcChatRepository.remove(removingChat);
+        assertThat(jdbcChatRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
             remove(removingChat);
         }});
 
-        chatRepository.remove(removingChat);
-        assertThat(chatRepository.findAll().size()).isEqualTo(3);
+        jdbcChatRepository.remove(removingChat);
+        assertThat(jdbcChatRepository.findAll().size()).isEqualTo(3);
     }
 
     @Test
     @Sql("/sql/insert-into-chats-table.sql")
     public void repositoryShouldCorrectlyFindContentFromTable() {
-        assertThat(chatRepository.getById(1L)).isEqualTo(Optional.of(new Chat(1L)));
-        assertThat(chatRepository.getById(23L)).isEqualTo(Optional.empty());
+        assertThat(jdbcChatRepository.getById(1L)).isEqualTo(Optional.of(new Chat(1L)));
+        assertThat(jdbcChatRepository.getById(23L)).isEqualTo(Optional.empty());
     }
 }
 

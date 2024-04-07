@@ -1,8 +1,8 @@
 package edu.java.domain.repository;
 
-import edu.java.domain.model.Chat;
-import edu.java.domain.model.Link;
-import edu.java.domain.model.Tracking;
+import edu.java.domain.model.jdbc.Chat;
+import edu.java.domain.model.jdbc.Link;
+import edu.java.domain.model.jdbc.Tracking;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;

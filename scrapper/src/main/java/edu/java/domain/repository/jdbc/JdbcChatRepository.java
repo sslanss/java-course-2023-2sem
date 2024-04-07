@@ -1,6 +1,6 @@
 package edu.java.domain.repository;
 
-import edu.java.domain.model.Chat;
+import edu.java.domain.model.jdbc.Chat;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;

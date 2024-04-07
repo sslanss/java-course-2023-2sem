@@ -1,7 +1,7 @@
-package edu.java.scrapper.repository;
+package edu.java.scrapper.repository.jdbc;
 
-import edu.java.domain.model.Link;
-import edu.java.domain.repository.LinkRepository;
+import edu.java.domain.model.jdbc.Link;
+import edu.java.domain.repository.jdbc.JdbcLinkRepository;
 import edu.java.scrapper.IntegrationTest;
 import java.net.URI;
 import java.time.LocalDate;
@@ -26,9 +26,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 @Rollback
 @Testcontainers
-public class LinkRepositoryTest extends IntegrationTest {
+public class JdbcLinkRepositoryTest extends IntegrationTest {
     @Autowired
-    private LinkRepository linkRepository;
+    private JdbcLinkRepository jdbcLinkRepository;
 
     private final static List<Link> expected = new ArrayList<>() {{
         add(new Link(1L, URI.create("https://github.com/sslanss/java-course-2023-2sem"),
@@ -51,7 +51,7 @@ public class LinkRepositoryTest extends IntegrationTest {
     @Rollback
     @Sql("/sql/insert-into-links-table.sql")
     public void repositoryShouldCorrectlyGetConvertedTableContent() {
-        assertThat(linkRepository.findAll()).containsExactlyElementsOf(expected);
+        assertThat(jdbcLinkRepository.findAll()).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -64,13 +64,13 @@ public class LinkRepositoryTest extends IntegrationTest {
         createdLink.setLastChecked(OffsetDateTime.of(LocalDate.now(), LocalTime.of(0, 0,
             0
         ), ZoneOffset.UTC));
-        Long id = linkRepository.add(createdLink);
+        Long id = jdbcLinkRepository.add(createdLink);
         createdLink.setLinkId(id);
 
-        assertThat(linkRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
+        assertThat(jdbcLinkRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
             add(createdLink);
         }});
-        assertThatThrownBy(() -> linkRepository.add(createdLink)).isInstanceOf(DataAccessException.class);
+        assertThatThrownBy(() -> jdbcLinkRepository.add(createdLink)).isInstanceOf(DataAccessException.class);
     }
 
     @Test
@@ -78,26 +78,26 @@ public class LinkRepositoryTest extends IntegrationTest {
     @Transactional
     @Rollback
     public void repositoryShouldCorrectlyFindContentFromTable() {
-        assertThat(linkRepository.getByUrl(expected.getFirst().getUrl()))
+        assertThat(jdbcLinkRepository.getByUrl(expected.getFirst().getUrl()))
             .isEqualTo(Optional.of(expected.getFirst()));
-        assertThat(linkRepository.getByUrl(URI.create(TEST_URI))).isEqualTo(Optional.empty());
+        assertThat(jdbcLinkRepository.getByUrl(URI.create(TEST_URI))).isEqualTo(Optional.empty());
 
-        Link findingLink = linkRepository.getByUrl(expected.getFirst().getUrl()).get();
-        assertThat(linkRepository.getById(findingLink.getLinkId())).isEqualTo(Optional.of(expected.getFirst()));
-        assertThat(linkRepository.getById(1L)).isEqualTo(Optional.empty());
+        Link findingLink = jdbcLinkRepository.getByUrl(expected.getFirst().getUrl()).get();
+        assertThat(jdbcLinkRepository.getById(findingLink.getLinkId())).isEqualTo(Optional.of(expected.getFirst()));
+        assertThat(jdbcLinkRepository.getById(1L)).isEqualTo(Optional.empty());
     }
 
     @Test
     @Sql("/sql/insert-into-links-table.sql")
     public void repositoryShouldCorrectlyRemoveContentFromTable() {
-        Link removingLink = linkRepository.getByUrl(expected.getFirst().getUrl()).get();
-        linkRepository.remove(removingLink);
-        assertThat(linkRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
+        Link removingLink = jdbcLinkRepository.getByUrl(expected.getFirst().getUrl()).get();
+        jdbcLinkRepository.remove(removingLink);
+        assertThat(jdbcLinkRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
             remove(0);
         }});
 
-        linkRepository.remove(removingLink);
-        assertThat(linkRepository.findAll().size()).isEqualTo(1);
+        jdbcLinkRepository.remove(removingLink);
+        assertThat(jdbcLinkRepository.findAll().size()).isEqualTo(1);
     }
 
 }

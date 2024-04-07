@@ -1,11 +1,11 @@
 package edu.java.domain.jdbc;
 
-import edu.java.domain.model.Chat;
-import edu.java.domain.model.Link;
-import edu.java.domain.model.Tracking;
-import edu.java.domain.repository.ChatRepository;
-import edu.java.domain.repository.LinkRepository;
-import edu.java.domain.repository.TrackingRepository;
+import edu.java.domain.model.jdbc.Chat;
+import edu.java.domain.model.jdbc.Link;
+import edu.java.domain.model.jdbc.Tracking;
+import edu.java.domain.repository.jdbc.JdbcChatRepository;
+import edu.java.domain.repository.jdbc.JdbcLinkRepository;
+import edu.java.domain.repository.jdbc.JdbcTrackingRepository;
 import edu.java.domain.service.LinkService;
 import edu.java.exceptions.tracker_exceptions.AlreadyTrackedLinkException;
 import edu.java.exceptions.tracker_exceptions.ChatNotFoundException;
@@ -22,40 +22,40 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class JdbcLinkService implements LinkService {
-    private final LinkRepository linkRepository;
-    private final TrackingRepository trackingRepository;
-    private final ChatRepository chatRepository;
+    private final JdbcLinkRepository jdbcLinkRepository;
+    private final JdbcTrackingRepository jdbcTrackingRepository;
+    private final JdbcChatRepository jdbcChatRepository;
     private static final int COUNT_LINKS_FOR_UPDATE = 10;
 
     public JdbcLinkService(
-        LinkRepository linkRepository,
-        TrackingRepository trackingRepository,
-        ChatRepository chatRepository
+        JdbcLinkRepository jdbcLinkRepository,
+        JdbcTrackingRepository jdbcTrackingRepository,
+        JdbcChatRepository jdbcChatRepository
     ) {
-        this.linkRepository = linkRepository;
-        this.trackingRepository = trackingRepository;
-        this.chatRepository = chatRepository;
+        this.jdbcLinkRepository = jdbcLinkRepository;
+        this.jdbcTrackingRepository = jdbcTrackingRepository;
+        this.jdbcChatRepository = jdbcChatRepository;
     }
 
     @Override
     public LinkResponse add(Long tgChatId, URI url) {
         //check case link valid
-        Chat followingChat = chatRepository.getById(tgChatId)
+        Chat followingChat = jdbcChatRepository.getById(tgChatId)
             .orElseThrow(ChatNotFoundException::new);
 
-        Link trackedLink = linkRepository.getByUrl(url)
+        Link trackedLink = jdbcLinkRepository.getByUrl(url)
             .orElseGet(() -> {
                 Link newLink = new Link();
                 newLink.setUrl(url);
                 newLink.setLastChecked(OffsetDateTime.now());
-                Long linkId = linkRepository.add(newLink);
+                Long linkId = jdbcLinkRepository.add(newLink);
                 newLink.setLinkId(linkId);
                 return newLink;
             });
 
         Tracking tracking = new Tracking(followingChat.getChatId(), trackedLink.getLinkId());
         try {
-            trackingRepository.add(tracking);
+            jdbcTrackingRepository.add(tracking);
         } catch (DataAccessException e) {
             throw new AlreadyTrackedLinkException();
         }
@@ -65,19 +65,19 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     public LinkResponse remove(Long tgChatId, URI url) {
-        Chat followingChat = chatRepository.getById(tgChatId)
+        Chat followingChat = jdbcChatRepository.getById(tgChatId)
             .orElseThrow(ChatNotFoundException::new);
 
-        Link untrackedLink = linkRepository.getByUrl(url)
+        Link untrackedLink = jdbcLinkRepository.getByUrl(url)
             .orElseThrow(UntrackedLinkException::new);
 
         Tracking tracking = new Tracking(followingChat.getChatId(), untrackedLink.getLinkId());
-        if (!trackingRepository.remove(tracking)) {
+        if (!jdbcTrackingRepository.remove(tracking)) {
             throw new UntrackedLinkException();
         }
 
-        if (!trackingRepository.findChatsByDeletedLinkId(untrackedLink.getLinkId())) {
-            linkRepository.remove(untrackedLink);
+        if (!jdbcTrackingRepository.findChatsByDeletedLinkId(untrackedLink.getLinkId())) {
+            jdbcLinkRepository.remove(untrackedLink);
         }
 
         return new LinkResponse(untrackedLink.getLinkId(), untrackedLink.getUrl());
@@ -85,18 +85,18 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     public ListLinksResponse listAllTrackedLinks(Long tgChatId) {
-        return mapLinksToListLinks(trackingRepository.getLinksByChatId(tgChatId));
+        return mapLinksToListLinks(jdbcTrackingRepository.getLinksByChatId(tgChatId));
     }
 
     @Override
     public List<Link> listLongestUncheckedLinks() {
-        return linkRepository.findLongestUnchecked(COUNT_LINKS_FOR_UPDATE);
+        return jdbcLinkRepository.findLongestUnchecked(COUNT_LINKS_FOR_UPDATE);
     }
 
     @Override
     public void updateLastChecked(Link link, OffsetDateTime currentCheck) {
         link.setLastChecked(currentCheck);
-        linkRepository.updateLastChecked(link);
+        jdbcLinkRepository.updateLastChecked(link);
     }
 
     private ListLinksResponse mapLinksToListLinks(List<Link> links) {

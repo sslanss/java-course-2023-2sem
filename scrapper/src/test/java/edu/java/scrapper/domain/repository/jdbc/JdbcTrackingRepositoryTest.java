@@ -1,9 +1,9 @@
-package edu.java.scrapper.repository;
+package edu.java.scrapper.repository.jdbc;
 
-import edu.java.domain.model.Chat;
-import edu.java.domain.model.Link;
-import edu.java.domain.model.Tracking;
-import edu.java.domain.repository.TrackingRepository;
+import edu.java.domain.model.jdbc.Chat;
+import edu.java.domain.model.jdbc.Link;
+import edu.java.domain.model.jdbc.Tracking;
+import edu.java.domain.repository.jdbc.JdbcTrackingRepository;
 import edu.java.scrapper.IntegrationTest;
 import java.net.URI;
 import java.time.LocalDate;
@@ -29,9 +29,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Transactional
 @Rollback
 @Testcontainers
-public class TrackingRepositoryTest extends IntegrationTest {
+public class JdbcTrackingRepositoryTest extends IntegrationTest {
     @Autowired
-    private TrackingRepository trackingRepository;
+    private JdbcTrackingRepository jdbcTrackingRepository;
 
     private final static List<Tracking> expected = new ArrayList<>() {{
         add(new Tracking(1L, 1L));
@@ -57,9 +57,9 @@ public class TrackingRepositoryTest extends IntegrationTest {
             ));
         }};
 
-        assertThat(trackingRepository.getLinksByChatId(2L)).isEqualTo(expectedLinks);
+        assertThat(jdbcTrackingRepository.getLinksByChatId(2L)).isEqualTo(expectedLinks);
 
-        assertThat(trackingRepository.getLinksByChatId(22L)).isEqualTo(Collections.emptyList());
+        assertThat(jdbcTrackingRepository.getLinksByChatId(22L)).isEqualTo(Collections.emptyList());
 
     }
 
@@ -67,7 +67,7 @@ public class TrackingRepositoryTest extends IntegrationTest {
     @Sql({"/sql/insert-with-ids-into-links-table.sql",
         "/sql/insert-into-chats-table.sql", "/sql/insert-into-trackings-table.sql"})
     public void repositoryShouldCorrectlyGetConvertedTableContent() {
-        Assertions.assertThat(trackingRepository.findAll()).containsExactlyElementsOf(expected);
+        Assertions.assertThat(jdbcTrackingRepository.findAll()).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -75,13 +75,13 @@ public class TrackingRepositoryTest extends IntegrationTest {
         "/sql/insert-into-chats-table.sql", "/sql/insert-into-trackings-table.sql"})
     public void repositoryShouldCorrectlyAddContentToTable() {
         Tracking createdTracking = new Tracking(33L, 2L);
-        trackingRepository.add(createdTracking);
+        jdbcTrackingRepository.add(createdTracking);
 
-        Assertions.assertThat(trackingRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
+        Assertions.assertThat(jdbcTrackingRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
             add(createdTracking);
         }});
 
-        assertThatThrownBy(() -> trackingRepository.add(createdTracking)).isInstanceOf(DataAccessException.class);
+        assertThatThrownBy(() -> jdbcTrackingRepository.add(createdTracking)).isInstanceOf(DataAccessException.class);
     }
 
     @Test
@@ -89,31 +89,31 @@ public class TrackingRepositoryTest extends IntegrationTest {
         "/sql/insert-into-chats-table.sql", "/sql/insert-into-trackings-table.sql"})
     public void repositoryShouldCorrectlyRemoveContentFromTable() {
         Tracking removingTracking = expected.getFirst();
-        trackingRepository.remove(removingTracking);
-        Assertions.assertThat(trackingRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
+        jdbcTrackingRepository.remove(removingTracking);
+        Assertions.assertThat(jdbcTrackingRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
             remove(0);
         }});
 
-        trackingRepository.remove(removingTracking);
-        Assertions.assertThat(trackingRepository.findAll().size()).isEqualTo(2);
+        jdbcTrackingRepository.remove(removingTracking);
+        Assertions.assertThat(jdbcTrackingRepository.findAll().size()).isEqualTo(2);
     }
 
     @Test
     @Sql({"/sql/insert-with-ids-into-links-table.sql",
         "/sql/insert-into-chats-table.sql", "/sql/insert-into-trackings-table.sql"})
     public void repositoryShouldCorrectlyGetChatsById() {
-        assertThat(trackingRepository.getChatsByLinkId(2L)).isEqualTo(new ArrayList<>() {{
+        assertThat(jdbcTrackingRepository.getChatsByLinkId(2L)).isEqualTo(new ArrayList<>() {{
             add(new Chat(2L));
         }});
-        assertThat(trackingRepository.getChatsByLinkId(23L)).isEqualTo(Collections.emptyList());
+        assertThat(jdbcTrackingRepository.getChatsByLinkId(23L)).isEqualTo(Collections.emptyList());
     }
 
     @Test
     @Sql({"/sql/insert-with-ids-into-links-table.sql",
         "/sql/insert-into-chats-table.sql", "/sql/insert-into-trackings-table.sql"})
     public void repositoryShouldCorrectlyCheckIfLinkCouldBeDeleted() {
-        assertThat(trackingRepository.findChatsByDeletedLinkId(3L)).isFalse();
-        assertThat(trackingRepository.findChatsByDeletedLinkId(2L)).isTrue();
+        assertThat(jdbcTrackingRepository.findChatsByDeletedLinkId(3L)).isFalse();
+        assertThat(jdbcTrackingRepository.findChatsByDeletedLinkId(2L)).isTrue();
 
     }
 
