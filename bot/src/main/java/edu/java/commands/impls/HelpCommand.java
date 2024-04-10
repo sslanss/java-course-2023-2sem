@@ -1,21 +1,23 @@
-package edu.java.bot.commands;
+package edu.java.commands.impls;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.commands.Command;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class HelpCommand implements Command {
-    private List<Command> commands;
 
-    public HelpCommand() {
-    }
+    private final String allCommands;
 
     public HelpCommand(List<Command> commands) {
-        this.commands = commands;
+        commands.add(this);
+        allCommands = commands.stream()
+            .map((command) -> command.command() + " - " + command.description())
+            .sorted(String::compareTo)
+            .collect(Collectors.joining("\n"));
     }
 
     @Override
@@ -25,15 +27,12 @@ public class HelpCommand implements Command {
 
     @Override
     public String description() {
-        return "вывести окно с командами";
+        return "вывести спиок доступных команд";
     }
 
     @Override
     public SendMessage handle(Update update) {
-        String allCommandsDescription = commands.stream()
-            .map((command) -> command.command() + " - " + command.description())
-            .collect(Collectors.joining("\n"));
         return new SendMessage(update.message().chat().id(), "Список доступных команд:\n"
-            + allCommandsDescription);
+            + allCommands);
     }
 }

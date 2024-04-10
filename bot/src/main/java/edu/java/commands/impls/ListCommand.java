@@ -1,20 +1,13 @@
-package edu.java.bot.commands;
+package edu.java.commands.impls;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.services.LinkService;
-import org.springframework.beans.factory.annotation.Autowired;
+import edu.java.commands.Command;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ListCommand implements Command {
-    private final LinkService service;
-
-    @Autowired
-    public ListCommand(LinkService service) {
-        this.service = service;
-    }
-
+    //TODO:ScrapperClient
     @Override
     public String command() {
         return "/list";
@@ -27,7 +20,12 @@ public class ListCommand implements Command {
 
     @Override
     public SendMessage handle(Update update) {
-        String commandResult = service.list(update.message().chat().id());
+        String commandResult = getAllTrackedLinks();
         return new SendMessage(update.message().chat().id(), commandResult);
+    }
+
+    public String getAllTrackedLinks() {
+        //TODO: ScrapperClient.listAllTrackedLinks
+        return "Список отслеживаемых вами ссылок:\n";
     }
 }
