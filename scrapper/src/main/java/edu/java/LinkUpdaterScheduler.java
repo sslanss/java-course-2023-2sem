@@ -17,7 +17,7 @@ public class LinkUpdaterScheduler {
 
     @Scheduled(fixedDelayString = "#{T(java.time.Duration).parse('PT'+'${app.scheduler.interval}').toMillis()}")
     public void update() {
-        log.info("Update method was invoked");
+        log.info("Check updates method was invoked");
         linkUpdateChecker.checkUpdates();
     }
 }
