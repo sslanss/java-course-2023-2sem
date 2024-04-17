@@ -1,7 +1,7 @@
 package edu.java.clients.github;
 
 import edu.java.api_exceptions.BadRequestException;
-import edu.java.exceptions.ApiErrorException;
+import edu.java.api_exceptions.ServerErrorException;
 import edu.java.exceptions.TooManyRequestsException;
 import edu.java.responses.GitHubResponse;
 import jakarta.validation.constraints.NotNull;
@@ -13,29 +13,29 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 public class GitHubClientImpl implements GitHubClient {
-    private static final String BASE_URL = "https://api.github.com";
     private final WebClient webClient;
+    private final Retry retry;
 
-    public GitHubClientImpl() {
-        this.webClient = WebClient.builder().baseUrl(BASE_URL).build();
-    }
-
-    public GitHubClientImpl(@NotNull String url) {
+    public GitHubClientImpl(@NotNull String url, Retry retry) {
         this.webClient = WebClient.builder()
             .defaultStatusHandler(HttpStatusCode::isError, this::handleError)
             .baseUrl(url)
             .build();
+        this.retry = retry;
     }
 
     private Mono<Exception> handleError(ClientResponse response) {
-        if (response.statusCode().is4xxClientError()) {
-            return Mono.error(new BadRequestException());
-        } else if (response.statusCode().equals(HttpStatus.UNPROCESSABLE_ENTITY)) {
+        if (response.statusCode().equals(HttpStatus.FORBIDDEN)
+            || response.statusCode().equals(HttpStatus.TOO_MANY_REQUESTS)) {
             return Mono.error(new TooManyRequestsException());
         }
-        return Mono.error(new ApiErrorException());
+        if (response.statusCode().is4xxClientError()) {
+            return Mono.error(new BadRequestException());
+        }
+        return Mono.error(new ServerErrorException(response.statusCode().value()));
     }
 
     @Override
@@ -46,10 +46,10 @@ public class GitHubClientImpl implements GitHubClient {
     ) {
         return webClient.get()
             .uri(uriBuilder -> uriBuilder.path("repos/{owner}/{repo}/activity")
-                //.queryParam("direction", "asc")
                 .build(owner, repository))
             .retrieve()
             .bodyToFlux(GitHubResponse.class)
+            .retryWhen(retry)
             .filter(gitHubResponse -> gitHubResponse.lastModified().isAfter(fromDate)
                 && (gitHubResponse.lastModified().isBefore(toDate) || gitHubResponse.lastModified().isEqual(toDate)))
             .switchIfEmpty(Flux.empty())

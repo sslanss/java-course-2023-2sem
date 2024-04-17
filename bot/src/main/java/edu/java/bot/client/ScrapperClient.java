@@ -13,16 +13,18 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 public class ScrapperClient {
     private final WebClient webClient;
+    private final Retry retry;
     private static final String TG_CHAT_BASE_URL = "/tg-chat/{id}";
     private static final String LINKS_BASE_URL = "/links";
     public static final String TG_CHAT_ID_HEADER = "Tg-Chat-Id";
-    private static final String BASE_URL = "http://localhost:8080";
 
-    public ScrapperClient() {
-        webClient = WebClient.builder().baseUrl(BASE_URL).build();
+    public ScrapperClient(String baseUrl, Retry retry) {
+        webClient = WebClient.builder().baseUrl(baseUrl).build();
+        this.retry = retry;
     }
 
     public void registerChat(Long id) {
@@ -31,6 +33,7 @@ public class ScrapperClient {
             .retrieve()
             .onStatus(this::isKnownError, this::handleError)
             .toBodilessEntity()
+            .retryWhen(retry)
             .block();
     }
 
@@ -40,6 +43,7 @@ public class ScrapperClient {
             .retrieve()
             .onStatus(this::isKnownError, this::handleError)
             .toBodilessEntity()
+            .retryWhen(retry)
             .block();
     }
 
@@ -50,6 +54,7 @@ public class ScrapperClient {
             .retrieve()
             .onStatus(this::isKnownError, this::handleError)
             .bodyToMono(ListLinksResponse.class)
+            .retryWhen(retry)
             .block();
     }
 
@@ -63,6 +68,7 @@ public class ScrapperClient {
             .retrieve()
             .onStatus(this::isKnownError, this::handleError)
             .bodyToMono(LinkResponse.class)
+            .retryWhen(retry)
             .block();
     }
 
@@ -76,6 +82,7 @@ public class ScrapperClient {
             .retrieve()
             .onStatus(this::isKnownError, this::handleError)
             .bodyToMono(LinkResponse.class)
+            .retryWhen(retry)
             .block();
     }
 
@@ -87,7 +94,7 @@ public class ScrapperClient {
 
     private Mono<Exception> handleError(ClientResponse response) {
         return response.bodyToMono(ApiErrorResponse.class)
-            .flatMap(errorResponse -> Mono.error(new ScrapperApiErrorException(
+            .flatMap(errorResponse -> Mono.error(new ScrapperApiException(
                 errorResponse.getCode(),
                 errorResponse.getDescription()
             )));

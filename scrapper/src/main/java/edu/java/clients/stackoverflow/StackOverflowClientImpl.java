@@ -1,41 +1,31 @@
 package edu.java.clients.stackoverflow;
 
 import edu.java.api_exceptions.BadRequestException;
-import edu.java.exceptions.ApiErrorException;
-import edu.java.exceptions.TooManyRequestsException;
+import edu.java.api_exceptions.ServerErrorException;
 import edu.java.responses.StackOverflowResponse;
 import java.time.OffsetDateTime;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 public class StackOverflowClientImpl implements StackOverflowClient {
-    private static final String BASE_URL = "https://api.stackexchange.com";
     private final WebClient webClient;
+    private final Retry retry;
 
-    public StackOverflowClientImpl() {
-        this.webClient = WebClient.builder()
-            .defaultStatusHandler(HttpStatusCode::isError, this::handleError)
-            .baseUrl(BASE_URL)
-            .build();
-    }
-
-    public StackOverflowClientImpl(String url) {
+    public StackOverflowClientImpl(String url, Retry retry) {
         this.webClient = WebClient.builder()
             .baseUrl(url)
             .build();
+        this.retry = retry;
     }
 
     private Mono<Exception> handleError(ClientResponse response) {
         if (response.statusCode().is4xxClientError()) {
             return Mono.error(new BadRequestException());
-        } else if (response.statusCode().equals(HttpStatus.BAD_GATEWAY)) {
-            return Mono.error(new TooManyRequestsException());
         }
-        return Mono.error(new ApiErrorException());
+        return Mono.error(new ServerErrorException(response.statusCode().value()));
     }
 
     @Override
@@ -54,6 +44,7 @@ public class StackOverflowClientImpl implements StackOverflowClient {
                 .build(questionId))
             .retrieve()
             .bodyToMono(StackOverflowResponse.class)
+            .retryWhen(retry)
             .block();
     }
 }

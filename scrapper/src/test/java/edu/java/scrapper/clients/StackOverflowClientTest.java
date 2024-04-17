@@ -20,7 +20,10 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 public class StackOverflowClientTest extends AbstractClientTest {
     private static final WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
 
-    private final StackOverflowClient stackOverflowClient = new StackOverflowClientImpl(server.baseUrl());
+    private final StackOverflowClient stackOverflowClient = new StackOverflowClientImpl(
+        server.baseUrl(),
+        defaultRetry
+    );
 
     @BeforeAll
     public static void beforeAll() {

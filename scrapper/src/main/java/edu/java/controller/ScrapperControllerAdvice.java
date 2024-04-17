@@ -25,7 +25,7 @@ public class ScrapperControllerAdvice {
 
     @ExceptionHandler(UntrackedLinkException.class)
     public ResponseEntity<ApiErrorResponse> handleLinkIsNotTrackedException(UntrackedLinkException e) {
-        ApiErrorResponse errorResponse = new ApiErrorResponse("Данная ссылка не отслеживается вами",
+        ApiErrorResponse errorResponse = new ApiErrorResponse("Данная ссылка не отслеживается вами. ",
             HttpStatus.NOT_FOUND.toString(), e.getClass().getName(), null, null
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

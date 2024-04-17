@@ -23,7 +23,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 public class GitHubClientTest extends AbstractClientTest {
     private static final WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
 
-    private final GitHubClient githubClient = new GitHubClientImpl(server.baseUrl());
+    private final GitHubClient githubClient = new GitHubClientImpl(server.baseUrl(), defaultRetry);
 
     @BeforeAll
     public static void beforeAll() {
@@ -59,7 +59,8 @@ public class GitHubClientTest extends AbstractClientTest {
             "test-repository",
             OffsetDateTime.of(LocalDate.of(2024, 2, 27),
                 LocalTime.of(21, 2, 35), ZoneOffset.UTC
-            ),OffsetDateTime.now());
+            ), OffsetDateTime.now()
+        );
 
         Assertions.assertThat(actual).isEqualTo(expected);
     }

@@ -2,8 +2,39 @@ app:
   scheduler:
     enable: true
     interval: 100s
-    force-check-delay: 10s
+    force-check-delay: 50s
   database-access-type: jpa
+  github-client:
+    base-url: https://api.github.com
+    retry:
+      max-attempts: 3
+      max-interval: 100ms
+      strategy: constant
+      retry-codes:
+        - 500
+        - 502
+        - 503
+  stack-overflow-client:
+    base-url: https://api.stackexchange.com
+    retry:
+      max-attempts: 3
+      max-interval: 2s
+      strategy: constant
+      retry-codes:
+        - 500
+        - 502
+        - 503
+  bot-client:
+    base-url: http://localhost:8090
+    retry:
+      max-attempts: 3
+      max-interval: 100ms
+      strategy: constant
+      retry-codes:
+        - 500
+        - 502
+        - 503
+
 
 spring:
   liquibase:

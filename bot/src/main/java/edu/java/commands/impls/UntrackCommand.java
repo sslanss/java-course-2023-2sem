@@ -2,7 +2,7 @@ package edu.java.commands.impls;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.client.ScrapperApiErrorException;
+import edu.java.bot.client.ScrapperApiException;
 import edu.java.bot.client.ScrapperClient;
 import edu.java.commands.Command;
 import edu.java.commands.ReplyCommand;
@@ -41,7 +41,7 @@ public class UntrackCommand implements Command, ReplyCommand {
         try {
             LinkResponse response = scrapperClient.untrackLink(id, link);
             //где лучше всего проверять валидность ссылки?
-        } catch (ScrapperApiErrorException ex) {
+        } catch (ScrapperApiException ex) {
             return ex.getDescription();
         }
         return "Ссылка была удалена из списка отслеживания. Вы больше не будете получать ее обновления.";

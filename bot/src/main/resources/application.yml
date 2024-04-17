@@ -1,5 +1,15 @@
 app:
   telegram-token: ${APP_TELEGRAM_BOT}
+  scrapper-client:
+    base-url: http://localhost:8080
+    retry:
+      max-attempts: 3
+      max-interval: 2s
+      strategy: exponential
+      retry-codes:
+        - 500
+        - 502
+        - 503
 
 spring:
   application:

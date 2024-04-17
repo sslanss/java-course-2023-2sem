@@ -2,7 +2,7 @@ package edu.java.commands.impls;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.client.ScrapperApiErrorException;
+import edu.java.bot.client.ScrapperApiException;
 import edu.java.bot.client.ScrapperClient;
 import edu.java.commands.Command;
 import edu.java.responses.ListLinksResponse;
@@ -42,7 +42,7 @@ public class ListCommand implements Command {
                     .map(linkResponse -> linkResponse.getUrl().toString())
                     .collect(Collectors.joining("\n"));
             }
-        } catch (ScrapperApiErrorException ex) {
+        } catch (ScrapperApiException ex) {
             return ex.getDescription() + "Для того, чтобы отслеживать ссылки, зарегистрируйтесь.";
         }
     }
