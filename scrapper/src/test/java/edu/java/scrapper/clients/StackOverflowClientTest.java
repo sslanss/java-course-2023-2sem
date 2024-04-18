@@ -1,11 +1,16 @@
 package edu.java.scrapper.clients;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.stubbing.Scenario;
+import edu.java.api_exceptions.ServerErrorException;
 import edu.java.clients.stackoverflow.StackOverflowClient;
 import edu.java.clients.stackoverflow.StackOverflowClientImpl;
+import edu.java.responses.GitHubResponse;
 import edu.java.responses.StackOverflowResponse;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
+import java.time.ZoneOffset;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
@@ -24,6 +29,13 @@ public class StackOverflowClientTest extends AbstractClientTest {
         server.baseUrl(),
         defaultRetry
     );
+    private static final String TEST_URL = "/questions/\\d+/answers";
+
+    private static final List<StackOverflowResponse.StackOverflowAnswerInfo> expected =
+        List.of(
+            new StackOverflowResponse.StackOverflowAnswerInfo(OffsetDateTime.parse("2024-03-08T07:36:24Z")),
+            new StackOverflowResponse.StackOverflowAnswerInfo(OffsetDateTime.parse("2024-03-07T11:06:40Z"))
+        );
 
     @BeforeAll
     public static void beforeAll() {
@@ -38,7 +50,7 @@ public class StackOverflowClientTest extends AbstractClientTest {
     @Test
     @SneakyThrows
     public void clientShouldGetGitHubResponses() {
-        server.stubFor(get(urlPathMatching("/questions/\\d+/answers"))
+        server.stubFor(get(urlPathMatching(TEST_URL))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
@@ -46,15 +58,58 @@ public class StackOverflowClientTest extends AbstractClientTest {
             )
         );
 
-        List<StackOverflowResponse.StackOverflowAnswerInfo> expected = new ArrayList<>() {{
-            add(new StackOverflowResponse.StackOverflowAnswerInfo(OffsetDateTime.parse("2024-03-08T07:36:24Z")));
-            add(new StackOverflowResponse.StackOverflowAnswerInfo(OffsetDateTime.parse("2024-03-07T11:06:40Z")));
-        }};
-        List<StackOverflowResponse.StackOverflowAnswerInfo> response = stackOverflowClient.getQuestionUpdate(
+        List<StackOverflowResponse.StackOverflowAnswerInfo> actual = stackOverflowClient.getQuestionUpdate(
             1L,
             OffsetDateTime.parse("2024-03-07T08:06:40Z"), OffsetDateTime.now()
         ).items();
 
-        Assertions.assertThat(response).isEqualTo(expected);
+        Assertions.assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @SneakyThrows
+    public void shouldRetryAfterGetServerErrorRequest() {
+        server.stubFor(get(urlPathMatching(TEST_URL))
+            .inScenario("Retry Scenario")
+            .whenScenarioStateIs(Scenario.STARTED)
+            .willReturn(aResponse()
+                .withStatus(500))
+            .willSetStateTo("Retry")
+        );
+        server.stubFor(get(urlPathMatching(TEST_URL))
+            .inScenario("Retry Scenario")
+            .whenScenarioStateIs("Retry")
+                .willReturn(aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody(jsonToString("src/test/resources/stackoverflow.json")))
+        );
+
+        List<StackOverflowResponse.StackOverflowAnswerInfo> actual = stackOverflowClient.getQuestionUpdate(
+            1L,
+            OffsetDateTime.parse("2024-03-07T08:06:40Z"), OffsetDateTime.now()
+        ).items();
+
+        Assertions.assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void shouldThrowExceptionAfterRetryAttemptsExpired() {
+        int retryAttempts = 3;
+        for (int i = 0; i < retryAttempts; i++) {
+            server.stubFor(get(urlPathMatching(TEST_URL))
+                .inScenario("Failed Retry Scenario")
+                .whenScenarioStateIs(i == 0 ? Scenario.STARTED : "Retry " + i)
+                .willReturn(aResponse()
+                    .withStatus(i < retryAttempts - 1 ? 500 : 200)
+                )
+                .willSetStateTo("Retry " + (i + 1))
+            );
+        }
+
+        Assertions.assertThatThrownBy(() -> stackOverflowClient.getQuestionUpdate(
+            1L,
+            OffsetDateTime.parse("2024-03-07T08:06:40Z"), OffsetDateTime.now()
+        ).items()).isInstanceOf(ServerErrorException.class);
     }
 }

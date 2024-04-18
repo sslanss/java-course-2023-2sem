@@ -5,6 +5,7 @@ import edu.java.api_exceptions.ServerErrorException;
 import edu.java.responses.StackOverflowResponse;
 import java.time.OffsetDateTime;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -16,6 +17,7 @@ public class StackOverflowClientImpl implements StackOverflowClient {
 
     public StackOverflowClientImpl(String url, Retry retry) {
         this.webClient = WebClient.builder()
+            .defaultStatusHandler(HttpStatusCode::isError, this::handleError)
             .baseUrl(url)
             .build();
         this.retry = retry;

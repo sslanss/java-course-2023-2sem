@@ -17,8 +17,6 @@ public class BotClient {
 
     private final Retry retry;
 
-    private static final String BASE_URL = "http://localhost:8090";
-
     public BotClient(@NotNull String baseUrl, Retry retry) {
         webClient = WebClient.builder().baseUrl(baseUrl).build();
         this.retry = retry;

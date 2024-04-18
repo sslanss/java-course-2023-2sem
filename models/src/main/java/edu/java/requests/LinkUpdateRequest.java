@@ -1,5 +1,6 @@
 package edu.java.requests;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LinkUpdateRequest {
     @NotNull
+    @Min(1)
     private Long id;
     @NotNull
     private URI url;

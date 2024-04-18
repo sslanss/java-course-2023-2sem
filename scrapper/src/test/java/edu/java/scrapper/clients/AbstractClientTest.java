@@ -15,7 +15,7 @@ public class AbstractClientTest {
     }
 
     protected Retry defaultRetry = new RetryBuilder()
-        .withMaxAttempts(3)
+        .withMaxAttempts(1)
         .withMaxInterval(Duration.ofSeconds(2))
         .withStatusCodes(Set.of(500, 502, 503))
         .exponential();

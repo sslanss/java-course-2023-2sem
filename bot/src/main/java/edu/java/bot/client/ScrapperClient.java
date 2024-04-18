@@ -87,7 +87,7 @@ public class ScrapperClient {
     }
 
     private boolean isKnownError(HttpStatusCode httpStatusCode) {
-        return httpStatusCode.equals(HttpStatus.ALREADY_REPORTED) || httpStatusCode.equals(HttpStatus.NOT_FOUND)
+        return httpStatusCode.equals(HttpStatus.CONFLICT) || httpStatusCode.equals(HttpStatus.NOT_FOUND)
             || httpStatusCode.equals(HttpStatus.BAD_REQUEST)
             || httpStatusCode.equals(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
