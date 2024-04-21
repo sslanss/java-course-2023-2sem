@@ -31,6 +31,7 @@ public record ApplicationConfig(
         @NotNull RetryConfig retry
     ) {
     }
+
     public record KafkaProducerConfig(
         @NotNull String bootstrapServers,
         @NotNull String acks
