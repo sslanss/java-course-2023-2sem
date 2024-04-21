@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -26,6 +27,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 @Rollback
 @Testcontainers
+@TestPropertySource(properties = {
+    "cache.jcache.cache-names[0]="
+})
 public class JdbcLinkRepositoryTest extends IntegrationTest {
     @Autowired
     private JdbcLinkRepository jdbcLinkRepository;

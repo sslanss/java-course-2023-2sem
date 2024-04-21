@@ -1,4 +1,4 @@
-package edu.java.configuration;
+package edu.java.configuration.database;
 
 import jakarta.validation.constraints.NotNull;
 import javax.sql.DataSource;

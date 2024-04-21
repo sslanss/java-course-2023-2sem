@@ -14,11 +14,14 @@ import org.springframework.validation.annotation.Validated;
 public record ApplicationConfig(
     @NotNull
     Scheduler scheduler,
+    @NotNull
+    AccessType databaseAccessType,
+    @NotNull boolean useQueue,
     @NotNull ClientConfig githubClient,
     @NotNull ClientConfig stackOverflowClient,
     @NotNull ClientConfig botClient,
-    @NotNull
-    AccessType databaseAccessType
+    @NotNull KafkaProducerConfig kafkaProducer
+
 ) {
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
     }
@@ -40,5 +43,12 @@ public record ApplicationConfig(
     public enum AccessType {
         JDBC, JPA,
         JOOQ
+    }
+
+    public record KafkaProducerConfig(
+        @NotNull String bootstrapServers,
+        @NotNull String acks,
+        @NotNull String topicName
+    ) {
     }
 }

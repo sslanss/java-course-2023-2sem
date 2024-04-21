@@ -10,6 +10,17 @@ app:
         - 500
         - 502
         - 503
+  kafka-producer:
+    bootstrap-servers: localhost:29092
+    acks: all
+  kafka-consumer:
+    bootstrap-servers: localhost:29092
+    group-id: updates-consumers
+  kafka-topics:
+    updates-topic-name: updates
+    dlq-name: updates_dlq
+    #dlq-partitions: 2
+    #dlq-replicas: 2
 
 spring:
   application:
@@ -20,14 +31,14 @@ spring:
     jcache:
       provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
     cache-names:
-      - buckets
+      - rate-limiter-buckets
     caffeine:
       spec: maximumSize=100000,expireAfterAccess=3600s
 
 bucket4j:
   enabled: true
   filters:
-    - cache-name: buckets
+    - cache-name: rate-limiter-buckets
       url: .*
       http-status-code: TOO_MANY_REQUESTS
       http-response-body: "{ \"status\": 429, \"error\": \"Too Many Requests\", \"message\":

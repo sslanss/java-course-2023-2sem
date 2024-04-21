@@ -2,11 +2,11 @@ package edu.java.updater;
 
 import edu.java.api_exceptions.BadRequestException;
 import edu.java.api_exceptions.ServerErrorException;
-import edu.java.clients.BotClient;
 import edu.java.clients.github.GitHubClient;
 import edu.java.domain.model.jdbc.Link;
 import edu.java.exceptions.TooManyRequestsException;
 import edu.java.responses.GitHubResponse;
+import edu.java.updates_sender.BotUpdatesSender;
 import edu.java.util.LinkValidator;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -19,13 +19,13 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class GitHubLinkUpdater implements LinkUpdater {
 
-    public GitHubLinkUpdater(GitHubClient gitHubClient, BotClient botClient) {
+    public GitHubLinkUpdater(GitHubClient gitHubClient, BotUpdatesSender botUpdatesSender) {
         this.gitHubClient = gitHubClient;
-        this.botClient = botClient;
+        this.botUpdatesSender = botUpdatesSender;
     }
 
     private final GitHubClient gitHubClient;
-    private final BotClient botClient;
+    private final BotUpdatesSender botUpdatesSender;
     private List<GitHubResponse> response;
 
     private RepositoryInfo parseRepositoryInfo(URI url) {
@@ -48,7 +48,7 @@ public class GitHubLinkUpdater implements LinkUpdater {
         if (response != null && !response.isEmpty()) {
             for (var update : response) {
                 try {
-                    botClient.sendLinkUpdate(link.getLinkId(), link.getUrl(),
+                    botUpdatesSender.sendLinkUpdate(link.getLinkId(), link.getUrl(),
                         String.format(
                             "Изменение в репозитории %s:\n %s %s в %s",
                             link.getUrl(),

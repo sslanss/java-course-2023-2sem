@@ -1,6 +1,5 @@
 package edu.java.configuration;
 
-import edu.java.clients.BotClient;
 import edu.java.clients.github.GitHubClient;
 import edu.java.clients.github.GitHubClientImpl;
 import edu.java.clients.stackoverflow.StackOverflowClient;
@@ -22,9 +21,4 @@ public class ClientConfig {
             factory.createRetry(config.stackOverflowClient().retry()));
     }
 
-    @Bean
-    public BotClient botClient(ApplicationConfig config, RetryConfigFactory factory) {
-        return new BotClient(config.botClient().baseUrl(),
-            factory.createRetry(config.botClient().retry()));
-    }
 }

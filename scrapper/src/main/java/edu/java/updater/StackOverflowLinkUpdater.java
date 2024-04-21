@@ -2,11 +2,11 @@ package edu.java.updater;
 
 import edu.java.api_exceptions.BadRequestException;
 import edu.java.api_exceptions.ServerErrorException;
-import edu.java.clients.BotClient;
 import edu.java.clients.stackoverflow.StackOverflowClient;
 import edu.java.domain.model.jdbc.Link;
 import edu.java.exceptions.TooManyRequestsException;
 import edu.java.responses.StackOverflowResponse;
+import edu.java.updates_sender.BotUpdatesSender;
 import edu.java.util.LinkValidator;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -18,13 +18,13 @@ import org.springframework.stereotype.Service;
 @Service
 @Log4j2
 public class StackOverflowLinkUpdater implements LinkUpdater {
-    public StackOverflowLinkUpdater(StackOverflowClient stackOverflowClient, BotClient botClient) {
+    public StackOverflowLinkUpdater(StackOverflowClient stackOverflowClient, BotUpdatesSender botUpdatesSender) {
         this.stackOverflowClient = stackOverflowClient;
-        this.botClient = botClient;
+        this.botUpdatesSender = botUpdatesSender;
     }
 
     private final StackOverflowClient stackOverflowClient;
-    private final BotClient botClient;
+    private final BotUpdatesSender botUpdatesSender;
     private StackOverflowResponse response;
 
     private long parseQuestionId(URI url) {
@@ -46,8 +46,17 @@ public class StackOverflowLinkUpdater implements LinkUpdater {
     public void sendUpdatesToChats(Link link, List<Long> tgChatsIds) {
         if (response != null && !response.items().isEmpty()) {
             for (var update : response.items()) {
+           /* StringBuilder updatesDescription = new StringBuilder();
+            for (var update : response.items()) {
+                updatesDescription += String.format(
+                    "К вопросу %s добавлен новый комментарий %s в %s",
+                    link.getUrl(),
+                    update.creationDate().toLocalDate().toString(),
+                    update.creationDate().toLocalTime().toString()
+                )
+            }*/
                 try {
-                    botClient.sendLinkUpdate(link.getLinkId(), link.getUrl(),
+                    botUpdatesSender.sendLinkUpdate(link.getLinkId(), link.getUrl(),
                         String.format(
                             "К вопросу %s добавлен новый комментарий %s в %s",
                             link.getUrl(),

@@ -2,7 +2,7 @@ package edu.java.scrapper.clients;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.api_exceptions.BadRequestException;
-import edu.java.clients.BotClient;
+import edu.java.updates_sender.BotHttpClient;
 import java.net.URI;
 import java.util.List;
 import lombok.SneakyThrows;
@@ -18,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
-public class BotClientTest extends AbstractClientTest {
+public class BotHttpClientTest extends AbstractClientTest {
     private static final WireMockServer server = new WireMockServer(wireMockConfig().dynamicPort());
 
-    private final BotClient botClient = new BotClient(server.baseUrl(), defaultRetry);
+    private final BotHttpClient botHttpClient = new BotHttpClient(server.baseUrl(), defaultRetry);
 
     @BeforeAll
     public static void beforeAll() {
@@ -40,7 +40,7 @@ public class BotClientTest extends AbstractClientTest {
             .withRequestBody(equalToJson(jsonToString("src/test/resources/link_update.json")))
             .willReturn(aResponse()));
 
-        assertThatNoException().isThrownBy(() -> botClient.sendLinkUpdate(1L, URI.create("https://github.com/"),
+        assertThatNoException().isThrownBy(() -> botHttpClient.sendLinkUpdate(1L, URI.create("https://github.com/"),
             "update", List.of(1L, 2L, 3L)
         ));
     }
@@ -56,7 +56,7 @@ public class BotClientTest extends AbstractClientTest {
                 .withHeader("Content-Type", "application/json")
                 .withBody(jsonToString("src/test/resources/api_error_response.json"))));
 
-        assertThatThrownBy(() -> botClient.sendLinkUpdate(-1L, URI.create("https://github.com/"),
+        assertThatThrownBy(() -> botHttpClient.sendLinkUpdate(-1L, URI.create("https://github.com/"),
             "update", List.of(1L, 2L, 3L)
         )).isInstanceOf(BadRequestException.class);
     }

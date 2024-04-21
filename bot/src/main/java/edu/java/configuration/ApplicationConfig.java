@@ -13,7 +13,10 @@ import org.springframework.validation.annotation.Validated;
 public record ApplicationConfig(
     @NotEmpty
     String telegramToken,
-    @NotNull ClientConfig scrapperClient
+    @NotNull ClientConfig scrapperClient,
+    @NotNull KafkaProducerConfig kafkaProducer,
+    @NotNull KafkaConsumerConfig kafkaConsumer,
+    @NotNull KafkaTopicsConfig kafkaTopics
 ) {
     public record RetryConfig(
         int maxAttempts,
@@ -26,6 +29,23 @@ public record ApplicationConfig(
     public record ClientConfig(
         @NotNull String baseUrl,
         @NotNull RetryConfig retry
+    ) {
+    }
+    public record KafkaProducerConfig(
+        @NotNull String bootstrapServers,
+        @NotNull String acks
+    ) {
+    }
+
+    public record KafkaConsumerConfig(
+        @NotNull String bootstrapServers,
+        @NotNull String groupId
+    ) {
+    }
+
+    public record KafkaTopicsConfig(
+        @NotNull String updatesTopicName,
+        @NotNull String dlqName
     ) {
     }
 }
