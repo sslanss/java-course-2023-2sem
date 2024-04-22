@@ -13,6 +13,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,33 +46,36 @@ public class StackOverflowLinkUpdater implements LinkUpdater {
     @Override
     public void sendUpdatesToChats(Link link, List<Long> tgChatsIds) {
         if (response != null && !response.items().isEmpty()) {
-            for (var update : response.items()) {
-           /* StringBuilder updatesDescription = new StringBuilder();
-            for (var update : response.items()) {
-                updatesDescription += String.format(
-                    "К вопросу %s добавлен новый комментарий %s в %s",
-                    link.getUrl(),
-                    update.creationDate().toLocalDate().toString(),
-                    update.creationDate().toLocalTime().toString()
-                )
-            }*/
-                try {
-                    botUpdatesSender.sendLinkUpdate(link.getLinkId(), link.getUrl(),
-                        String.format(
-                            "К вопросу %s добавлен новый комментарий %s в %s",
-                            link.getUrl(),
-                            update.creationDate().toLocalDate().toString(),
-                            update.creationDate().toLocalTime().toString()
-                        ),
-                        tgChatsIds
-                    );
-                    //наверное добавить код ошибки
-                } catch (TooManyRequestsException | BadRequestException e) {
-                    log.error("Client exception: [{}]", e.getClass());
-                } catch (ServerErrorException e) {
-                    log.error("Server exception: [{}]", e.getCode());
-                }
+            StringBuilder updatesDescription = getUpdatesDescription(link);
+
+            try {
+                botUpdatesSender.sendLinkUpdate(link.getLinkId(), link.getUrl(), updatesDescription.toString(),
+                    tgChatsIds
+                );
+            } catch (TooManyRequestsException | BadRequestException e) {
+                log.error("Client exception: [{}]", e.getClass());
+            } catch (ServerErrorException e) {
+                log.error("Server exception: [{}]", e.getCode());
             }
         }
+    }
+
+    @NotNull private StringBuilder getUpdatesDescription(Link link) {
+        String changesDescription = response.items().size() == 1 ? "добавлен новый комментарий:\n"
+           : "добавлены новые комментарии:\n";
+
+        StringBuilder updatesDescription = new StringBuilder(String.format(
+            "К вопросу %s ",
+            link.getUrl()
+        ) + changesDescription);
+
+        for (var update : response.items()) {
+            updatesDescription.append(String.format(
+                "%s в %s\n",
+                update.creationDate().toLocalDate().toString(),
+                update.creationDate().toLocalTime().toString()
+            ));
+        }
+        return updatesDescription;
     }
 }

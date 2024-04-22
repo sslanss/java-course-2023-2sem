@@ -13,14 +13,11 @@ app:
   kafka-producer:
     bootstrap-servers: localhost:29092
     acks: all
+    topic-name: updates_dlq
   kafka-consumer:
     bootstrap-servers: localhost:29092
     group-id: updates-consumers
-  kafka-topics:
-    updates-topic-name: updates
-    dlq-name: updates_dlq
-    #dlq-partitions: 2
-    #dlq-replicas: 2
+    topic-name: updates
 
 spring:
   application:

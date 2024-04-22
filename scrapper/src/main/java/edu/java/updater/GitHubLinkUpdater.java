@@ -13,6 +13,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -46,24 +47,35 @@ public class GitHubLinkUpdater implements LinkUpdater {
     @Override
     public void sendUpdatesToChats(Link link, List<Long> tgChatsIds) {
         if (response != null && !response.isEmpty()) {
-            for (var update : response) {
-                try {
-                    botUpdatesSender.sendLinkUpdate(link.getLinkId(), link.getUrl(),
-                        String.format(
-                            "Изменение в репозитории %s:\n %s %s в %s",
-                            link.getUrl(),
-                            update.activityType(), update.lastModified().toLocalDate().toString(),
-                            update.lastModified().toLocalTime().toString()
-                        ),
-                        tgChatsIds
-                    );
-                } catch (TooManyRequestsException | BadRequestException e) {
-                    log.error("Client exception: [{}]", e.getClass());
-                } catch (ServerErrorException e) {
-                    log.error("Server exception: [{}]", e.getCode());
-                }
+            StringBuilder updatesDescription = getUpdatesDescription(link);
+
+            try {
+                botUpdatesSender.sendLinkUpdate(link.getLinkId(), link.getUrl(), updatesDescription.toString(),
+                    tgChatsIds
+                );
+            } catch (TooManyRequestsException | BadRequestException e) {
+                log.error("Client exception: [{}]", e.getClass());
+            } catch (ServerErrorException e) {
+                log.error("Server exception: [{}]", e.getCode());
             }
         }
+    }
+
+    @NotNull private StringBuilder getUpdatesDescription(Link link) {
+        String changesDescription = response.size() == 1 ? "Изменение" : "Изменения";
+
+        StringBuilder updatesDescription = new StringBuilder(changesDescription + String.format(
+            " в репозитории %s:\n",
+            link.getUrl()
+        ));
+
+        for (var update : response) {
+            updatesDescription.append(String.format("%s %s в %s\n",
+                update.activityType(), update.lastModified().toLocalDate().toString(),
+                update.lastModified().toLocalTime().toString()
+            ));
+        }
+        return updatesDescription;
     }
 
     record RepositoryInfo(String owner, String repo) {

@@ -15,8 +15,7 @@ public record ApplicationConfig(
     String telegramToken,
     @NotNull ClientConfig scrapperClient,
     @NotNull KafkaProducerConfig kafkaProducer,
-    @NotNull KafkaConsumerConfig kafkaConsumer,
-    @NotNull KafkaTopicsConfig kafkaTopics
+    @NotNull KafkaConsumerConfig kafkaConsumer
 ) {
     public record RetryConfig(
         int maxAttempts,
@@ -34,19 +33,15 @@ public record ApplicationConfig(
 
     public record KafkaProducerConfig(
         @NotNull String bootstrapServers,
-        @NotNull String acks
+        @NotNull String acks,
+        @NotNull String topicName
     ) {
     }
 
     public record KafkaConsumerConfig(
         @NotNull String bootstrapServers,
-        @NotNull String groupId
-    ) {
-    }
-
-    public record KafkaTopicsConfig(
-        @NotNull String updatesTopicName,
-        @NotNull String dlqName
+        @NotNull String groupId,
+        @NotNull String topicName
     ) {
     }
 }

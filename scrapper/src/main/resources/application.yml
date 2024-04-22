@@ -4,7 +4,7 @@ app:
     interval: 100s
     force-check-delay: 50s
   database-access-type: jpa
-  use-queue: false
+  use-queue: true
   github-client:
     base-url: https://api.github.com
     retry:

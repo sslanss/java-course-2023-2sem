@@ -5,13 +5,16 @@ import java.net.URI;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 
 @Slf4j
+@RequiredArgsConstructor
 public class ScrapperQueueProducer implements BotUpdatesSender {
-    KafkaTemplate<Long, LinkUpdateRequest> producer;
+
+    private final KafkaTemplate<Long, LinkUpdateRequest> producer;
 
     @Override
     public void sendLinkUpdate(Long id, URI url, String description, List<Long> tgChatIds) {
