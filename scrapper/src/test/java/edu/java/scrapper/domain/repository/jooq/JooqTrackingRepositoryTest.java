@@ -5,10 +5,7 @@ import edu.java.domain.model.jooq.tables.pojos.Links;
 import edu.java.domain.model.jooq.tables.pojos.Trackings;
 import edu.java.domain.repository.jooq.JooqTrackingRepository;
 import edu.java.scrapper.IntegrationTest;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,24 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@SpringBootTest
 @Transactional
 @Rollback
 @Testcontainers
+@SpringBootTest(properties = "app.database-access-type=jooq")
 public class JooqTrackingRepositoryTest extends IntegrationTest {
-    @DynamicPropertySource
-    static void jooqProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jooq");
-    }
-
     @Autowired
     private JooqTrackingRepository jooqTrackingRepository;
 

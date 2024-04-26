@@ -1,10 +1,8 @@
 package edu.java.scrapper.domain.repository.jooq;
 
-import edu.java.domain.model.jdbc.Link;
 import edu.java.domain.model.jooq.tables.pojos.Links;
 import edu.java.domain.repository.jooq.JooqLinkRepository;
 import edu.java.scrapper.IntegrationTest;
-import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
@@ -17,23 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
 @Transactional
 @Rollback
 @Testcontainers
+@SpringBootTest(properties = "app.database-access-type=jooq")
 public class JooqLinkRepositoryTest extends IntegrationTest {
-    @DynamicPropertySource
-    static void jooqProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jooq");
-    }
 
     @Autowired
     private JooqLinkRepository jooqLinkRepository;
@@ -97,7 +89,7 @@ public class JooqLinkRepositoryTest extends IntegrationTest {
 
     @Test
     @Sql("/sql/insert-into-links-table.sql")
-    public void repositoryShouldCorrectlyFindLongestUncheckedLinks(){
+    public void repositoryShouldCorrectlyFindLongestUncheckedLinks() {
         List<Links> uncheckedLinks = jooqLinkRepository.findLongestUnchecked(10);
 
         assertThat(uncheckedLinks).containsExactlyElementsOf(expected);
@@ -105,7 +97,7 @@ public class JooqLinkRepositoryTest extends IntegrationTest {
 
     @Test
     @Sql("/sql/insert-into-links-table.sql")
-    public void repositoryShouldCorrectlyUpdateLastCheckedField(){
+    public void repositoryShouldCorrectlyUpdateLastCheckedField() {
         Links link = jooqLinkRepository.getByUrl("https://github.com/sslanss/java-course-2023-2sem")
             .get();
         OffsetDateTime newLastChecked = OffsetDateTime.of(LocalDate.now(), LocalTime.of(0, 0,

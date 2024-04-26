@@ -11,30 +11,22 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
 @Transactional
 @Rollback
 @Testcontainers
+@SpringBootTest(properties = "app.database-access-type=jdbc")
 public class JdbcLinkRepositoryTest extends IntegrationTest {
-    @DynamicPropertySource
-    static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jdbc");
-    }
-
     @Autowired
     private JdbcLinkRepository jdbcLinkRepository;
 
@@ -110,7 +102,7 @@ public class JdbcLinkRepositoryTest extends IntegrationTest {
 
     @Test
     @Sql("/sql/insert-into-links-table.sql")
-    public void repositoryShouldCorrectlyFindLongestUncheckedLinks(){
+    public void repositoryShouldCorrectlyFindLongestUncheckedLinks() {
         List<Link> uncheckedLinks = jdbcLinkRepository.findLongestUnchecked(10);
 
         assertThat(uncheckedLinks).containsExactlyElementsOf(expected);
@@ -118,12 +110,12 @@ public class JdbcLinkRepositoryTest extends IntegrationTest {
 
     @Test
     @Sql("/sql/insert-into-links-table.sql")
-    public void repositoryShouldCorrectlyUpdateLastCheckedField(){
+    public void repositoryShouldCorrectlyUpdateLastCheckedField() {
         Link link = jdbcLinkRepository.getByUrl(URI.create("https://github.com/sslanss/java-course-2023-2sem"))
             .get();
         OffsetDateTime newLastChecked = OffsetDateTime.of(LocalDate.now(), LocalTime.of(0, 0,
-                0
-            ), ZoneOffset.UTC);
+            0
+        ), ZoneOffset.UTC);
         link.setLastChecked(newLastChecked);
 
         jdbcLinkRepository.updateLastChecked(link);

@@ -11,24 +11,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
+//@SpringBootTest
 @Transactional
 @Rollback
 @Testcontainers
+@SpringBootTest(properties = "app.database-access-type=jdbc")
 public class JdbcChatRepositoryTest extends IntegrationTest {
-    @DynamicPropertySource
+    /*@DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {
         registry.add("app.database-access-type", () -> "jdbc");
     }
-
+*/
     @Autowired
     private JdbcChatRepository jdbcChatRepository;
 
