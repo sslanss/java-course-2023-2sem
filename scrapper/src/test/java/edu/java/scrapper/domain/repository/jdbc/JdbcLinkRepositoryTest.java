@@ -11,22 +11,30 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest(properties = "app.database-access-type=jdbc")
+@SpringBootTest
 @Transactional
 @Rollback
 @Testcontainers
 public class JdbcLinkRepositoryTest extends IntegrationTest {
+    @DynamicPropertySource
+    static void jdbcProperties(DynamicPropertyRegistry registry) {
+        registry.add("app.database-access-type", () -> "jdbc");
+    }
+
     @Autowired
     private JdbcLinkRepository jdbcLinkRepository;
 
@@ -98,6 +106,29 @@ public class JdbcLinkRepositoryTest extends IntegrationTest {
 
         jdbcLinkRepository.remove(removingLink);
         assertThat(jdbcLinkRepository.findAll().size()).isEqualTo(1);
+    }
+
+    @Test
+    @Sql("/sql/insert-into-links-table.sql")
+    public void repositoryShouldCorrectlyFindLongestUncheckedLinks(){
+        List<Link> uncheckedLinks = jdbcLinkRepository.findLongestUnchecked(10);
+
+        assertThat(uncheckedLinks).containsExactlyElementsOf(expected);
+    }
+
+    @Test
+    @Sql("/sql/insert-into-links-table.sql")
+    public void repositoryShouldCorrectlyUpdateLastCheckedField(){
+        Link link = jdbcLinkRepository.getByUrl(URI.create("https://github.com/sslanss/java-course-2023-2sem"))
+            .get();
+        OffsetDateTime newLastChecked = OffsetDateTime.of(LocalDate.now(), LocalTime.of(0, 0,
+                0
+            ), ZoneOffset.UTC);
+        link.setLastChecked(newLastChecked);
+
+        jdbcLinkRepository.updateLastChecked(link);
+
+        assertThat(jdbcLinkRepository.findAll().get(1).getLastChecked()).isEqualTo(newLastChecked);
     }
 
 }

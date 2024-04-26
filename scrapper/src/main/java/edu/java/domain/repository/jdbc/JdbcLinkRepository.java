@@ -90,7 +90,7 @@ public class JdbcLinkRepository {
     public List<Link> findLongestUnchecked(int count) {
         String sql = """
                 SELECT * FROM links
-                ORDER BY last_check_time ASC
+                ORDER BY last_checked_at ASC
                 LIMIT ?
                 """;
         return jdbcTemplate.query(sql, LINK_ROW_MAPPER, count);
@@ -102,7 +102,7 @@ public class JdbcLinkRepository {
                 SET last_checked_at = ?
                 WHERE url = ?
                 """;
-        jdbcTemplate.update(sql, link.getLastChecked(), link.getUrl());
+        jdbcTemplate.update(sql, link.getLastChecked(), link.getUrl().toString());
     }
 
 }
