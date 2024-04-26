@@ -110,12 +110,6 @@ public class Links implements Serializable {
             return false;
         }
         final Links other = (Links) obj;
-        /*if (this.linkId == null) {
-            if (other.linkId != null)
-                return false;
-        }
-        else if (!this.linkId.equals(other.linkId))
-            return false;*/
         if (this.url == null) {
             if (other.url != null) {
                 return false;
@@ -137,7 +131,6 @@ public class Links implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        //result = prime * result + ((this.linkId == null) ? 0 : this.linkId.hashCode());
         result = prime * result + ((this.url == null) ? 0 : this.url.hashCode());
         result = prime * result + ((this.lastCheckedAt == null) ? 0 : this.lastCheckedAt.hashCode());
         return result;

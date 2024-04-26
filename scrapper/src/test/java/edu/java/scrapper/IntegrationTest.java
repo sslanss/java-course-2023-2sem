@@ -27,6 +27,7 @@ public abstract class IntegrationTest {
     static {
         POSTGRES = new PostgreSQLContainer<>("postgres:15")
             .withDatabaseName("scrapper")
+            .withEnv("POSTGRES_MAX_CONNECTIONS", "300")
             .withUsername("postgres")
             .withPassword("postgres");
         POSTGRES.start();
