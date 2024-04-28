@@ -1,7 +1,7 @@
 app:
   scheduler:
     enable: true
-    interval: 100s
+    interval: 30s
     force-check-delay: 50s
   database-access-type: jpa
   use-queue: true
@@ -58,6 +58,7 @@ spring:
       hibernate:
         format_sql: true
         show_sql: false
+
   #cache:
     #jcache:
       #provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
@@ -95,3 +96,20 @@ springdoc:
 
 logging:
   config: classpath:log4j2-plain.xml
+
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include:
+          - info
+          - health
+          - prometheus
+      path-mapping:
+        prometheus: /metrics
+  metrics:
+    tags:
+      application: ${spring.application.name}
