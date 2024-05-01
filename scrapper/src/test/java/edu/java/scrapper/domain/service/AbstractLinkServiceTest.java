@@ -5,14 +5,17 @@ import edu.java.exceptions.tracker_exceptions.AlreadyTrackedLinkException;
 import edu.java.exceptions.tracker_exceptions.ChatNotFoundException;
 import edu.java.exceptions.tracker_exceptions.UntrackedLinkException;
 import edu.java.scrapper.IntegrationTest;
+import java.net.URI;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import java.net.URI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -20,9 +23,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @Transactional
 @Rollback
 @Testcontainers
+@TestPropertySource(properties = {"bucket4j.enabled=false"})
+@TestPropertySource(properties = {"spring.cache.type=none"})
 public class AbstractLinkServiceTest extends IntegrationTest {
     @Autowired
     private LinkService linkService;
+    @MockBean
+    private CacheManager cacheManager;
 
     private static final String TEST_URI = "https://github.com/test-user/test-repo";
 
@@ -37,7 +44,6 @@ public class AbstractLinkServiceTest extends IntegrationTest {
         assertThatThrownBy(() -> linkService.listAllTrackedLinks(32L))
             .isInstanceOf(ChatNotFoundException.class);
     }
-
 
     @Test
     @Sql({"/sql/insert-into-links-table.sql",

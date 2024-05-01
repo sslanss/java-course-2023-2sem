@@ -7,7 +7,10 @@ import edu.java.scrapper.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -17,9 +20,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @Transactional
 @Rollback
 @Testcontainers
+@TestPropertySource(properties = {"bucket4j.enabled=false"})
+@TestPropertySource(properties = {"spring.cache.type=none"})
 public class AbstractTgChatServiceTest extends IntegrationTest {
     @Autowired
     private TgChatService tgChatService;
+    @MockBean
+    private CacheManager cacheManager;
 
     @Test
     public void serviceShouldRegister() {

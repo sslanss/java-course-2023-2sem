@@ -1,6 +1,6 @@
 {
     "description": "Incorrect request parameters",
-    "code": "404 BAD_REQUEST",
+    "code": "400 BAD_REQUEST",
     "exceptionName": "edu.java.api_exceptions.BadRequestException",
     "exceptionMessage": null,
     "stacktrace": null
