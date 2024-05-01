@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -24,8 +26,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Transactional
 @Rollback
 @Testcontainers
-@SpringBootTest(properties = "app.database-access-type=jooq")
+@SpringBootTest
 public class JooqTrackingRepositoryTest extends IntegrationTest {
+    @DynamicPropertySource
+    static void jooqProperties(DynamicPropertyRegistry registry) {
+        registry.add("app.database-access-type", () -> "jooq");
+    }
+
     @Autowired
     private JooqTrackingRepository jooqTrackingRepository;
 
@@ -41,11 +48,11 @@ public class JooqTrackingRepositoryTest extends IntegrationTest {
     public void repositoryShouldCorrectlyGetLinksById() {
         List<Links> expectedLinks = new ArrayList<>() {{
             add(new Links(1L, "https://github.com/sslanss/java-course-2023-2sem",
-                OffsetDateTime.parse("2024-02-20T03:00+03:00")
+                OffsetDateTime.parse("2024-02-20T00:00Z")
             ));
             add(new Links(2L, "https://stackoverflow.com/questions/78226097/problems-in-validations-via-" +
                 "web-service-in-a-vue-3-application",
-                OffsetDateTime.parse("2024-03-26T03:00+03:00")
+                OffsetDateTime.parse("2024-03-26T00:00Z")
             ));
         }};
 
