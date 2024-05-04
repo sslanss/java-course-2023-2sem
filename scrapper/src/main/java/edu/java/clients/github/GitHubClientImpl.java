@@ -2,7 +2,7 @@ package edu.java.clients.github;
 
 import edu.java.api_exceptions.BadRequestException;
 import edu.java.api_exceptions.ServerErrorException;
-import edu.java.clients.responses.GitHubResponse;
+import edu.java.responses.GitHubResponse;
 import edu.java.exceptions.TooManyRequestsException;
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;

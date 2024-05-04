@@ -5,7 +5,7 @@ import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import edu.java.api_exceptions.ServerErrorException;
 import edu.java.clients.stackoverflow.StackOverflowClient;
 import edu.java.clients.stackoverflow.StackOverflowClientImpl;
-import edu.java.clients.responses.StackOverflowResponse;
+import edu.java.responses.StackOverflowResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.SneakyThrows;

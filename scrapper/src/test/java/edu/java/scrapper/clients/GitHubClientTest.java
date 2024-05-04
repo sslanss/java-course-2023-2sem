@@ -5,7 +5,7 @@ import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import edu.java.api_exceptions.ServerErrorException;
 import edu.java.clients.github.GitHubClient;
 import edu.java.clients.github.GitHubClientImpl;
-import edu.java.clients.responses.GitHubResponse;
+import edu.java.responses.GitHubResponse;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;

@@ -1,6 +1,6 @@
 package edu.java.clients.stackoverflow;
 
-import edu.java.clients.responses.StackOverflowResponse;
+import edu.java.responses.StackOverflowResponse;
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 
