@@ -1,0 +1,14 @@
+[
+    {
+        "timestamp": "2024-02-25T20:00:00Z",
+        "activity_type": "force_push"
+    },
+    {
+        "timestamp": "2024-03-01T20:00:00Z",
+        "activity_type": "push"
+    },
+    {
+        "timestamp": "2024-03-07T21:02:35Z",
+        "activity_type": "branch_creation"
+    }
+]
