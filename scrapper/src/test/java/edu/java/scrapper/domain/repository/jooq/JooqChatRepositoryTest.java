@@ -1,7 +1,7 @@
-package edu.java.scrapper.domain.repository.jdbc;
+package edu.java.scrapper.domain.repository.jooq;
 
-import edu.java.domain.model.jdbc.Chat;
-import edu.java.domain.repository.jdbc.JdbcChatRepository;
+import edu.java.domain.model.jooq.tables.pojos.Chats;
+import edu.java.domain.repository.jooq.JooqChatRepository;
 import edu.java.scrapper.IntegrationTest;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,58 +23,56 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Rollback
 @Testcontainers
 @SpringBootTest
-public class JdbcChatRepositoryTest extends IntegrationTest {
+public class JooqChatRepositoryTest extends IntegrationTest {
     @DynamicPropertySource
-    static void jdbcProperties(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> "jdbc");
+    static void jooqProperties(DynamicPropertyRegistry registry) {
+        registry.add("app.database-access-type", () -> "jooq");
     }
 
-    @Autowired
-    private JdbcChatRepository jdbcChatRepository;
+    @Autowired JooqChatRepository jooqChatRepository;
 
-    private final static List<Chat> expected = new ArrayList<>() {{
-        add(new Chat(1L));
-        add(new Chat(2L));
-        add(new Chat(33L));
-        add(new Chat(1111111111L));
+    private final static List<Chats> expected = new ArrayList<>() {{
+        add(new Chats(1L));
+        add(new Chats(2L));
+        add(new Chats(33L));
+        add(new Chats(1111111111L));
     }};
 
     @Test
     @Sql("/sql/insert-into-chats-table.sql")
     public void repositoryShouldCorrectlyGetConvertedTableContent() {
-        assertThat(jdbcChatRepository.findAll()).containsExactlyElementsOf(expected);
+        assertThat(jooqChatRepository.findAll()).containsExactlyElementsOf(expected);
     }
 
     @Test
     @Sql("/sql/insert-into-chats-table.sql")
     public void repositoryShouldCorrectlyAddContentToTable() {
-        Chat createdChat = new Chat(22L);
-        jdbcChatRepository.add(createdChat);
-        assertThat(jdbcChatRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
+        Chats createdChat = new Chats(22L);
+        jooqChatRepository.add(createdChat);
+        assertThat(jooqChatRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
             add(createdChat);
         }});
 
-        assertThatThrownBy(() -> jdbcChatRepository.add(createdChat)).isInstanceOf(DataAccessException.class);
+        assertThatThrownBy(() -> jooqChatRepository.add(createdChat)).isInstanceOf(DataAccessException.class);
     }
 
     @Test
     @Sql("/sql/insert-into-chats-table.sql")
     public void repositoryShouldCorrectlyRemoveContentFromTable() {
-        Chat removingChat = new Chat(2L);
-        jdbcChatRepository.remove(removingChat);
-        assertThat(jdbcChatRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
+        Chats removingChat = new Chats(2L);
+        jooqChatRepository.remove(removingChat);
+        assertThat(jooqChatRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
             remove(removingChat);
         }});
 
-        jdbcChatRepository.remove(removingChat);
-        assertThat(jdbcChatRepository.findAll().size()).isEqualTo(3);
+        jooqChatRepository.remove(removingChat);
+        assertThat(jooqChatRepository.findAll().size()).isEqualTo(3);
     }
 
     @Test
     @Sql("/sql/insert-into-chats-table.sql")
     public void repositoryShouldCorrectlyFindContentFromTable() {
-        assertThat(jdbcChatRepository.getById(1L)).isEqualTo(Optional.of(new Chat(1L)));
-        assertThat(jdbcChatRepository.getById(23L)).isEqualTo(Optional.empty());
+        assertThat(jooqChatRepository.getById(1L)).isEqualTo(Optional.of(new Chats(1L)));
+        assertThat(jooqChatRepository.getById(23L)).isEqualTo(Optional.empty());
     }
 }
-

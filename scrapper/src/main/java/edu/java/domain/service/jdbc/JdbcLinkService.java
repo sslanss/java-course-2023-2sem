@@ -88,7 +88,7 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     public ListLinksResponse listAllTrackedLinks(Long tgChatId) {
-        Chat followingChat = jdbcChatRepository.getById(tgChatId)
+        jdbcChatRepository.getById(tgChatId)
             .orElseThrow(ChatNotFoundException::new);
 
         return mapLinksToListLinks(jdbcTrackingRepository.getLinksByChatId(tgChatId));
