@@ -15,8 +15,7 @@ import lombok.Setter;
 public class LinkUpdateRequest {
     @NotNull
     private Long id;
-    @NotEmpty
-    @NotBlank
+    @NotNull
     private URI url;
     @NotEmpty
     @NotBlank

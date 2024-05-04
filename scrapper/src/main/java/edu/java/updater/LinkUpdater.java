@@ -1,6 +1,6 @@
 package edu.java.updater;
 
-import edu.java.domain.model.Link;
+import edu.java.domain.model.jdbc.Link;
 import java.time.OffsetDateTime;
 import java.util.List;
 
