@@ -5,7 +5,7 @@ import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import edu.java.api_exceptions.ServerErrorException;
 import edu.java.clients.github.GitHubClient;
 import edu.java.clients.github.GitHubClientImpl;
-import edu.java.responses.GitHubResponse;
+import edu.java.clients.responses.GitHubResponse;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
@@ -14,9 +14,7 @@ import java.util.List;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -56,7 +54,7 @@ public class GitHubClientTest extends AbstractClientTest {
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(jsonToString("src/test/resources/github.json"))
+                .withBody(jsonToString("src/test/resources/json/github.json"))
             )
         );
 
@@ -87,7 +85,7 @@ public class GitHubClientTest extends AbstractClientTest {
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(jsonToString("src/test/resources/github.json"))
+                .withBody(jsonToString("src/test/resources/json/github.json"))
             )
         );
 

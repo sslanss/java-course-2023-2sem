@@ -5,12 +5,8 @@ import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import edu.java.api_exceptions.ServerErrorException;
 import edu.java.clients.stackoverflow.StackOverflowClient;
 import edu.java.clients.stackoverflow.StackOverflowClientImpl;
-import edu.java.responses.GitHubResponse;
-import edu.java.responses.StackOverflowResponse;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import edu.java.clients.responses.StackOverflowResponse;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
@@ -54,7 +50,7 @@ public class StackOverflowClientTest extends AbstractClientTest {
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(jsonToString("src/test/resources/stackoverflow.json"))
+                .withBody(jsonToString("src/test/resources/json/stackoverflow.json"))
             )
         );
 
@@ -82,7 +78,7 @@ public class StackOverflowClientTest extends AbstractClientTest {
                 .willReturn(aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "application/json")
-                    .withBody(jsonToString("src/test/resources/stackoverflow.json")))
+                    .withBody(jsonToString("src/test/resources/json/stackoverflow.json")))
         );
 
         List<StackOverflowResponse.StackOverflowAnswerInfo> actual = stackOverflowClient.getQuestionUpdate(
