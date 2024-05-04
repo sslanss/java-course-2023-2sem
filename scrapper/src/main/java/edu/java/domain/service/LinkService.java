@@ -1,6 +1,6 @@
 package edu.java.domain.service;
 
-import edu.java.domain.model.jdbc.Link;
+import edu.java.domain.model.Link;
 import edu.java.responses.LinkResponse;
 import edu.java.responses.ListLinksResponse;
 import java.net.URI;

@@ -1,17 +1,17 @@
 package edu.java.requests;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import java.net.URI;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class AddLinkRequest {
-    @NotNull
+    @NotEmpty
+    @NotBlank
     private URI link;
 }

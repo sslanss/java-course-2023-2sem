@@ -3,7 +3,7 @@ package edu.java.updater;
 import edu.java.api_exceptions.BadRequestException;
 import edu.java.clients.BotClient;
 import edu.java.clients.stackoverflow.StackOverflowClient;
-import edu.java.domain.model.jdbc.Link;
+import edu.java.domain.model.Link;
 import edu.java.exceptions.ApiErrorException;
 import edu.java.exceptions.TooManyRequestsException;
 import edu.java.responses.StackOverflowResponse;
@@ -49,10 +49,9 @@ public class StackOverflowLinkUpdater implements LinkUpdater {
                 try {
                     botClient.sendLinkUpdate(link.getLinkId(), link.getUrl(),
                         String.format(
-                            "К вопросу %s добавлен новый комментарий %s в %s",
+                            "К вопросу %s добавлен новый комментарий в %s",
                             link.getUrl(),
-                            update.creationDate().toLocalDate().toString(),
-                            update.creationDate().toLocalTime().toString()
+                            update.creationDate().toString()
                         ),
                         tgChatsIds
                     );

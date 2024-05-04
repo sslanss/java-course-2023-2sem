@@ -1,7 +1,7 @@
 package edu.java.domain.service;
 
-import edu.java.domain.model.jdbc.Chat;
-import edu.java.domain.model.jdbc.Link;
+import edu.java.domain.model.Chat;
+import edu.java.domain.model.Link;
 import java.util.List;
 
 public interface TgChatService {
