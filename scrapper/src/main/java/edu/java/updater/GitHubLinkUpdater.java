@@ -3,7 +3,7 @@ package edu.java.updater;
 import edu.java.api_exceptions.BadRequestException;
 import edu.java.clients.BotClient;
 import edu.java.clients.github.GitHubClient;
-import edu.java.domain.model.jdbc.Link;
+import edu.java.domain.model.Link;
 import edu.java.exceptions.ApiErrorException;
 import edu.java.exceptions.TooManyRequestsException;
 import edu.java.responses.GitHubResponse;
@@ -50,10 +50,9 @@ public class GitHubLinkUpdater implements LinkUpdater {
                 try {
                     botClient.sendLinkUpdate(link.getLinkId(), link.getUrl(),
                         String.format(
-                            "Изменение в репозитории %s:\n %s %s в %s",
+                            "Репозиторий %s обновился: %s в %s",
                             link.getUrl(),
-                            update.activityType(), update.lastModified().toLocalDate().toString(),
-                            update.lastModified().toLocalTime().toString()
+                            update.activityType(), update.lastModified().toString()
                         ),
                         tgChatsIds
                     );

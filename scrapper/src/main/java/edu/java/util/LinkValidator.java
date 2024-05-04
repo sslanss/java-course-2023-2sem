@@ -25,9 +25,9 @@ public class LinkValidator {
     }
 
     public static LinkType checkLinkType(URI link) {
-        if (link.toString().matches("^https://stackoverflow.com.*")) {
+        if (link.toString().matches("^https://stackoverflow.com*")) {
             return LinkType.STACKOVERFLOW;
-        } else if (link.toString().matches("^https://github.com.*")) {
+        } else if (link.toString().matches("^https://github.com*")) {
             return LinkType.GITHUB;
         } else {
             return LinkType.UNSUPPORTED;

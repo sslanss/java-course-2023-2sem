@@ -11,15 +11,8 @@ import org.springframework.validation.annotation.Validated;
 @EnableScheduling
 public record ApplicationConfig(
     @NotNull
-    Scheduler scheduler,
-    @NotNull
-    AccessType databaseAccessType
+    Scheduler scheduler
 ) {
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
-    }
-
-    public enum AccessType {
-        JDBC, JPA,
-        JOOQ
     }
 }
