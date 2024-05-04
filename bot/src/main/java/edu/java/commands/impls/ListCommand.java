@@ -2,12 +2,19 @@ package edu.java.commands.impls;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.client.ScrapperApiErrorException;
+import edu.java.bot.client.ScrapperClient;
 import edu.java.commands.Command;
+import edu.java.responses.ListLinksResponse;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class ListCommand implements Command {
-    //TODO:ScrapperClient
+    private final ScrapperClient scrapperClient;
+
     @Override
     public String command() {
         return "/list";
@@ -20,12 +27,23 @@ public class ListCommand implements Command {
 
     @Override
     public SendMessage handle(Update update) {
-        String commandResult = getAllTrackedLinks();
-        return new SendMessage(update.message().chat().id(), commandResult);
+        String trackedLinksResult = getAllTrackedLinks(update.message().chat().id());
+        return new SendMessage(update.message().chat().id(), trackedLinksResult);
     }
 
-    public String getAllTrackedLinks() {
-        //TODO: ScrapperClient.listAllTrackedLinks
-        return "Список отслеживаемых вами ссылок:\n";
+    private String getAllTrackedLinks(Long id) {
+        try {
+            ListLinksResponse trackedLinks = scrapperClient.getLinks(id);
+            if (trackedLinks == null || trackedLinks.getLinks().isEmpty()) {
+                return "Список отслеживаемых вами ссылок пуст.";
+            } else {
+                return "Список отслеживаемых вами ссылок:\n" + trackedLinks.getLinks()
+                    .stream()
+                    .map(linkResponse -> linkResponse.getUrl().toString())
+                    .collect(Collectors.joining("\n"));
+            }
+        } catch (ScrapperApiErrorException ex) {
+            return ex.getDescription() + "Для того, чтобы отслеживать ссылки, зарегистрируйтесь.";
+        }
     }
 }

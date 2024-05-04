@@ -27,6 +27,7 @@
         <!-- Other -->
         <jetbrains-annotations.version>24.1.0</jetbrains-annotations.version>
         <java-telegram-bot-api.version>7.0.1</java-telegram-bot-api.version>
+        <org.jooq.version>3.19.6</org.jooq.version>
 
         <!-- Tests -->
         <testcontainers.version>1.19.4</testcontainers.version>
@@ -49,6 +50,7 @@
         <module>bot</module>
         <module>scrapper</module>
         <module>models</module>
+        <module>scrapper-jooq</module>
     </modules>
 
     <dependencyManagement>
@@ -62,6 +64,11 @@
                 <groupId>org.wiremock</groupId>
                 <artifactId>wiremock-standalone</artifactId>
                 <version>${wiremock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq</artifactId>
+                <version>${org.jooq.version}</version>
             </dependency>
 
             <dependency>

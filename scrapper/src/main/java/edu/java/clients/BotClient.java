@@ -6,7 +6,6 @@ import edu.java.responses.ApiErrorResponse;
 import java.net.URI;
 import java.util.List;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -18,10 +17,6 @@ public class BotClient {
 
     public BotClient() {
         webClient = WebClient.builder().baseUrl(BASE_URL).build();
-    }
-
-    private boolean isBadRequest(HttpStatusCode httpStatusCode) {
-        return httpStatusCode.equals(HttpStatus.BAD_REQUEST);
     }
 
     public void sendLinkUpdate(Long id, URI url, String description, List<Long> tgChatIds) {

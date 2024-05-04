@@ -7,6 +7,7 @@ import edu.java.commands.impls.UntrackCommand;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import static org.mockito.Mockito.when;
 
 public class UntrackCommandTest extends AbstractCommandTest {
     @Autowired
@@ -29,6 +30,7 @@ public class UntrackCommandTest extends AbstractCommandTest {
     @Test
     public void trackCommandShouldReturnCorrectResponseMessage() {
         Update update = mockUpdate();
+        when(update.message().text()).thenReturn("https://stackoverflow.com/questions/100");
 
         SendMessage sendMessage = untrackCommand.handleLink(update);
 

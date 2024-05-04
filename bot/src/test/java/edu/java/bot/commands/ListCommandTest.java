@@ -11,15 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ListCommandTest extends AbstractCommandTest {
     @Autowired
     ListCommand listCommand;
-
-    private static final String EXPECTED_MESSAGE = "Список отслеживаемых вами ссылок:\n";
+    private static final String EMPTY_LIST_EXPECTED_MESSAGE = "Список отслеживаемых вами ссылок пуст.";
 
     @Test
-    public void listCommandShouldReturnCorrectMessage() {
+    public void listCommandShouldReturnCorrectEmptyMessage() {
         Update update = mockUpdate();
 
         SendMessage sendMessage = listCommand.handle(update);
 
-        Assertions.assertThat(sendMessage.getParameters().get("text")).isEqualTo(EXPECTED_MESSAGE);
+        Assertions.assertThat(sendMessage.getParameters().get("text")).isEqualTo(EMPTY_LIST_EXPECTED_MESSAGE);
     }
+
 }

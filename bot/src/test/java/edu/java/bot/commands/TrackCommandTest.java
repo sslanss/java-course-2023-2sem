@@ -16,7 +16,6 @@ public class TrackCommandTest extends AbstractCommandTest {
         Я поддерживаю следующие ресурсы: STACKOVERFLOW, GITHUB.
         Пришлите ссылку на вопрос в формате:"https://stackoverflow.com/questions/номер-вопроса"
         или на репозиторий в формате:"https://github.com/владелец-репозитория/название-репозитория".
-        Введите ссылку для начала отслеживания ее обновлений:
         """;
 
     private static final String EXPECTED_SUCCESSFUL_RESPONSE_MESSAGE =
