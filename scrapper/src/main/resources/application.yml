@@ -1,10 +1,10 @@
 app:
   scheduler:
     enable: true
-    interval: 30s
-    force-check-delay: 50s
+    interval: 100s
+    force-check-delay: 10s
   database-access-type: jpa
-  use-queue: true
+  use-queue: false
   github-client:
     base-url: https://api.github.com
     retry:
@@ -59,31 +59,31 @@ spring:
         format_sql: true
         show_sql: false
 
-  #cache:
-    #jcache:
-      #provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
-    #cache-names:
-     # - scrapper-buckets
-    #caffeine:
-     # spec: maximumSize=100000,expireAfterAccess=3600s
+  cache:
+    jcache:
+      provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+    cache-names:
+      - scrapper-buckets
+    caffeine:
+      spec: maximumSize=100000,expireAfterAccess=3600s
 
-#bucket4j:
- # enabled: true
-  #filters:
-   # - cache-name: scrapper-buckets
-    #  url: .*
-     # http-status-code: TOO_MANY_REQUESTS
-      #http-response-body: "{ \"status\": 429, \"error\": \"Too Many Requests\", \"message\":
-      #\"You have exhausted your API Request Quota\" }"
-      #rate-limits:
-       # - cache-key: getRemoteAddr()
-        #  bandwidths:
-         #   - capacity: 50
-          #    refill-capacity: 1
-           #   time: 2
-            #  unit: seconds
-             # initial-capacity: 10
-              #refill-speed: interval
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: scrapper-buckets
+      url: .*
+      http-status-code: TOO_MANY_REQUESTS
+      http-response-body: "{ \"status\": 429, \"error\": \"Too Many Requests\", \"message\":
+      \"You have exhausted your API Request Quota\" }"
+      rate-limits:
+        - cache-key: getRemoteAddr()
+          bandwidths:
+            - capacity: 50
+              refill-capacity: 1
+              time: 2
+              unit: seconds
+              initial-capacity: 10
+              refill-speed: interval
 
 server:
   port: 8080

@@ -13,7 +13,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -24,8 +23,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Rollback
 @Testcontainers
 @SpringBootTest
-@TestPropertySource(properties = {"bucket4j.enabled=false"})
-@TestPropertySource(properties = {"spring.cache.type=none"})
 public class JooqChatRepositoryTest extends IntegrationTest {
     @DynamicPropertySource
     static void jooqProperties(DynamicPropertyRegistry registry) {

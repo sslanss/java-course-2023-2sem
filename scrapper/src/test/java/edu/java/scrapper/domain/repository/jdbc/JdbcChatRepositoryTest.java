@@ -24,8 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Rollback
 @Testcontainers
 @SpringBootTest
-@TestPropertySource(properties = {"bucket4j.enabled=false"})
-@TestPropertySource(properties = {"spring.cache.type=none"})
+@TestPropertySource(locations = "classpath:application.yml")
 public class JdbcChatRepositoryTest extends IntegrationTest {
     @DynamicPropertySource
     static void jdbcProperties(DynamicPropertyRegistry registry) {

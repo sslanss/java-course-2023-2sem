@@ -16,11 +16,13 @@ import liquibase.resource.DirectoryResourceAccessor;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
+@TestPropertySource(locations = "classpath:application.yml")
 public abstract class IntegrationTest {
     public static PostgreSQLContainer<?> POSTGRES;
 
