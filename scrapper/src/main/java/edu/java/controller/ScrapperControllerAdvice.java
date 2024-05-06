@@ -25,7 +25,7 @@ public class ScrapperControllerAdvice {
 
     @ExceptionHandler(UntrackedLinkException.class)
     public ResponseEntity<ApiErrorResponse> handleLinkIsNotTrackedException(UntrackedLinkException e) {
-        ApiErrorResponse errorResponse = new ApiErrorResponse("Данная ссылка не отслеживается вами",
+        ApiErrorResponse errorResponse = new ApiErrorResponse("Данная ссылка не отслеживается вами. ",
             HttpStatus.NOT_FOUND.toString(), e.getClass().getName(), null, null
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -44,9 +44,9 @@ public class ScrapperControllerAdvice {
     @ExceptionHandler(AlreadyTrackedLinkException.class)
     public ResponseEntity<ApiErrorResponse> handleLinkIsAlreadyTrackedException(AlreadyTrackedLinkException e) {
         ApiErrorResponse errorResponse = new ApiErrorResponse("Ссылка уже отслеживается вами. ",
-            HttpStatus.ALREADY_REPORTED.toString(), e.getClass().getName(), null, null
+            HttpStatus.CONFLICT.toString(), e.getClass().getName(), null, null
         );
-        return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(errorResponse);
     }
 
@@ -62,9 +62,9 @@ public class ScrapperControllerAdvice {
     @ExceptionHandler(ChatReregisteringException.class)
     public ResponseEntity<ApiErrorResponse> handleChatReregisteringException(ChatReregisteringException e) {
         ApiErrorResponse errorResponse = new ApiErrorResponse("Вы уже были зарегистрированы ранее. ",
-            HttpStatus.ALREADY_REPORTED.toString(), e.getClass().getName(), null, null
+            HttpStatus.CONFLICT.toString(), e.getClass().getName(), null, null
         );
-        return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(errorResponse);
     }
 }

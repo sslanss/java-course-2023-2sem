@@ -2,7 +2,7 @@ package edu.java.commands.impls;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.client.ScrapperApiErrorException;
+import edu.java.bot.client.ScrapperApiException;
 import edu.java.bot.client.ScrapperClient;
 import edu.java.commands.Command;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class StartCommand implements Command {
     private String registerChat(Long id) {
         try {
             scrapperClient.registerChat(id);
-        } catch (ScrapperApiErrorException e) {
+        } catch (ScrapperApiException e) {
             return e.getDescription();
         }
         return "Вы были зарегистрированы! ";

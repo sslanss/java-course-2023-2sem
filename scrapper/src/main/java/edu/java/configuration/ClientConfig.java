@@ -11,17 +11,20 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ClientConfig {
     @Bean
-    public GitHubClient gitHubWebClient() {
-        return new GitHubClientImpl();
+    public GitHubClient gitHubWebClient(ApplicationConfig config, RetryConfigFactory factory) {
+        return new GitHubClientImpl(config.githubClient().baseUrl(),
+            factory.createRetry(config.githubClient().retry()));
     }
 
     @Bean
-    public StackOverflowClient stackOverflowWebClient() {
-        return new StackOverflowClientImpl();
+    public StackOverflowClient stackOverflowWebClient(ApplicationConfig config, RetryConfigFactory factory) {
+        return new StackOverflowClientImpl(config.stackOverflowClient().baseUrl(),
+            factory.createRetry(config.stackOverflowClient().retry()));
     }
 
     @Bean
-    public BotClient botClient() {
-        return new BotClient();
+    public BotClient botClient(ApplicationConfig config, RetryConfigFactory factory) {
+        return new BotClient(config.botClient().baseUrl(),
+            factory.createRetry(config.botClient().retry()));
     }
 }

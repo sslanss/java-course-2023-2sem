@@ -1,12 +1,12 @@
 package edu.java.updater;
 
 import edu.java.api_exceptions.BadRequestException;
+import edu.java.api_exceptions.ServerErrorException;
 import edu.java.clients.BotClient;
 import edu.java.clients.github.GitHubClient;
+import edu.java.clients.responses.GitHubResponse;
 import edu.java.domain.model.jdbc.Link;
-import edu.java.exceptions.ApiErrorException;
 import edu.java.exceptions.TooManyRequestsException;
-import edu.java.responses.GitHubResponse;
 import edu.java.util.LinkValidator;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -57,11 +57,10 @@ public class GitHubLinkUpdater implements LinkUpdater {
                         ),
                         tgChatsIds
                     );
-                    //наверное добавить код ошибки
-                } catch (TooManyRequestsException | ApiErrorException e) {
-                    log.error("API exception: [{}]", e.getClass());
-                } catch (BadRequestException e) {
+                } catch (TooManyRequestsException | BadRequestException e) {
                     log.error("Client exception: [{}]", e.getClass());
+                } catch (ServerErrorException e) {
+                    log.error("Server exception: [{}]", e.getCode());
                 }
             }
         }
