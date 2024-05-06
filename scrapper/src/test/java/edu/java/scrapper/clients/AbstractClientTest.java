@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Set;
 import lombok.SneakyThrows;
+import org.springframework.test.context.TestPropertySource;
 import reactor.util.retry.Retry;
 
 public class AbstractClientTest {

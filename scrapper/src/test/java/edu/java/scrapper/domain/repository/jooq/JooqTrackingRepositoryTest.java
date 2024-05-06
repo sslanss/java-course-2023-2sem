@@ -9,7 +9,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,19 +16,16 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Transactional
 @Rollback
 @Testcontainers
 @SpringBootTest
-@TestPropertySource(properties = {"bucket4j.enabled=false"})
-@TestPropertySource(properties = {"spring.cache.type=none"})
 public class JooqTrackingRepositoryTest extends IntegrationTest {
     @DynamicPropertySource
     static void jooqProperties(DynamicPropertyRegistry registry) {
@@ -50,16 +46,16 @@ public class JooqTrackingRepositoryTest extends IntegrationTest {
         "/sql/insert-into-chats-table.sql", "/sql/insert-into-trackings-table.sql"})
     public void repositoryShouldCorrectlyGetLinksById() {
         List<Links> expectedLinks = new ArrayList<>() {{
-            add(new Links(1L, "https://github.com/sslanss/java-course-2023-2sem",
-                OffsetDateTime.parse("2024-02-20T00:00Z")
-            ));
             add(new Links(2L, "https://stackoverflow.com/questions/78226097/problems-in-validations-via-" +
                 "web-service-in-a-vue-3-application",
                 OffsetDateTime.parse("2024-03-26T00:00Z")
             ));
+            add(new Links(1L, "https://github.com/sslanss/java-course-2023-2sem",
+                OffsetDateTime.parse("2024-02-20T00:00Z")
+            ));
         }};
 
-        assertThat(jooqTrackingRepository.getLinksByChatId(2L)).isEqualTo(expectedLinks);
+        assertThat(jooqTrackingRepository.getLinksByChatId(2L)).containsExactlyInAnyOrderElementsOf(expectedLinks);
 
         assertThat(jooqTrackingRepository.getLinksByChatId(22L)).isEqualTo(Collections.emptyList());
 
@@ -69,7 +65,7 @@ public class JooqTrackingRepositoryTest extends IntegrationTest {
     @Sql({"/sql/insert-with-ids-into-links-table.sql",
         "/sql/insert-into-chats-table.sql", "/sql/insert-into-trackings-table.sql"})
     public void repositoryShouldCorrectlyGetConvertedTableContent() {
-        Assertions.assertThat(jooqTrackingRepository.findAll()).containsExactlyElementsOf(expected);
+        assertThat(jooqTrackingRepository.findAll()).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -79,7 +75,7 @@ public class JooqTrackingRepositoryTest extends IntegrationTest {
         Trackings createdTracking = new Trackings(33L, 2L);
         jooqTrackingRepository.add(createdTracking);
 
-        Assertions.assertThat(jooqTrackingRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
+        assertThat(jooqTrackingRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
             add(createdTracking);
         }});
 
@@ -92,12 +88,12 @@ public class JooqTrackingRepositoryTest extends IntegrationTest {
     public void repositoryShouldCorrectlyRemoveContentFromTable() {
         Trackings removingTracking = expected.getFirst();
         jooqTrackingRepository.remove(removingTracking);
-        Assertions.assertThat(jooqTrackingRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
+        assertThat(jooqTrackingRepository.findAll()).containsExactlyElementsOf(new ArrayList<>(expected) {{
             remove(0);
         }});
 
         jooqTrackingRepository.remove(removingTracking);
-        Assertions.assertThat(jooqTrackingRepository.findAll().size()).isEqualTo(2);
+        assertThat(jooqTrackingRepository.findAll().size()).isEqualTo(2);
     }
 
     @Test

@@ -1,4 +1,4 @@
-package edu.java.clients;
+package edu.java.updates_sender;
 
 import edu.java.api_exceptions.BadRequestException;
 import edu.java.requests.LinkUpdateRequest;
@@ -12,16 +12,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
-public class BotClient {
+public class BotHttpClient implements BotUpdatesSender {
     private final WebClient webClient;
 
     private final Retry retry;
 
-    public BotClient(@NotNull String baseUrl, Retry retry) {
+    public BotHttpClient(@NotNull String baseUrl, Retry retry) {
         webClient = WebClient.builder().baseUrl(baseUrl).build();
         this.retry = retry;
     }
 
+    @Override
     public void sendLinkUpdate(Long id, URI url, String description, List<Long> tgChatIds) {
         LinkUpdateRequest linkUpdate = new LinkUpdateRequest(id, url, description, tgChatIds);
 

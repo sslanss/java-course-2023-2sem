@@ -1,4 +1,4 @@
-package edu.java.clients.responses;
+package edu.java.responses;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

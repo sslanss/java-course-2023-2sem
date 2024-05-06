@@ -31,7 +31,7 @@ public class BotController {
             throw new BadRequestException(HttpStatus.BAD_REQUEST.toString(), "Incorrect request parameters");
         }
         botService.sendUpdate(linkUpdate);
-        log.info("Обновление для {} было обработано", linkUpdate.getUrl());
+        log.info("Update for link {} was sent to chats", linkUpdate.getUrl());
         return ResponseEntity.ok(HttpStatus.OK);
     }
 }

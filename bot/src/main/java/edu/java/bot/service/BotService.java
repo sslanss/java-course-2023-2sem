@@ -13,7 +13,7 @@ public class BotService {
     private final LinkTrackerBot bot;
 
     public void sendUpdate(LinkUpdateRequest linkUpdateRequest) {
-        String updateMessage = "Новое обновление:\n"
+        String updateMessage = "Новые обновления:\n\n"
             + linkUpdateRequest.getDescription();
 
         linkUpdateRequest.getTgChatIds()

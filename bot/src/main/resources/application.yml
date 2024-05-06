@@ -10,6 +10,14 @@ app:
         - 500
         - 502
         - 503
+  kafka-producer:
+    bootstrap-servers: localhost:29092
+    acks: all
+    topic-name: updates_dlq
+  kafka-consumer:
+    bootstrap-servers: localhost:29092
+    group-id: updates-consumers
+    topic-name: updates
 
 spring:
   application:
@@ -20,14 +28,14 @@ spring:
     jcache:
       provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
     cache-names:
-      - buckets
+      - rate-limiter-buckets
     caffeine:
       spec: maximumSize=100000,expireAfterAccess=3600s
 
 bucket4j:
   enabled: true
   filters:
-    - cache-name: buckets
+    - cache-name: rate-limiter-buckets
       url: .*
       http-status-code: TOO_MANY_REQUESTS
       http-response-body: "{ \"status\": 429, \"error\": \"Too Many Requests\", \"message\":
@@ -52,3 +60,20 @@ springdoc:
 
 logging:
   config: classpath:log4j2-plain.xml
+
+management:
+  server:
+    port: 8091
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include:
+          - info
+          - health
+          - prometheus
+      path-mapping:
+        prometheus: /metrics
+  metrics:
+    tags:
+      application: ${spring.application.name}

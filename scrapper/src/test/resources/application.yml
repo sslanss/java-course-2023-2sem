@@ -1,0 +1,55 @@
+app:
+  scheduler:
+    enable: false
+    interval: 100s
+    force-check-delay: 20s
+  database-access-type: jpa
+  use-queue: false
+  github-client:
+    base-url: https://api.github.com
+    retry:
+      max-attempts: 3
+      max-interval: 100ms
+      strategy: exponential
+      retry-codes:
+        - 500
+        - 502
+        - 503
+  stack-overflow-client:
+    base-url: https://api.stackexchange.com
+    retry:
+      max-attempts: 3
+      max-interval: 100ms
+      strategy: exponential
+      retry-codes:
+        - 500
+        - 502
+        - 503
+  bot-client:
+    base-url: http://localhost:8090
+    retry:
+      max-attempts: 3
+      max-interval: 1s
+      strategy: constant
+      retry-codes:
+        - 500
+        - 502
+        - 503
+  kafka-producer:
+    bootstrap-servers: localhost:29092
+    acks: all
+    topic-name: updates
+spring:
+  liquibase:
+    enabled: false
+  application:
+    name: scrapper
+  datasource:
+    url: jdbc:postgresql://localhost:5432/scrapper
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  cache:
+    type: none
+bucket4j:
+  enabled: false

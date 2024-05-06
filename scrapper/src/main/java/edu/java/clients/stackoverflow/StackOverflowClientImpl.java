@@ -2,7 +2,7 @@ package edu.java.clients.stackoverflow;
 
 import edu.java.api_exceptions.BadRequestException;
 import edu.java.api_exceptions.ServerErrorException;
-import edu.java.clients.responses.StackOverflowResponse;
+import edu.java.responses.StackOverflowResponse;
 import java.time.OffsetDateTime;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatusCode;

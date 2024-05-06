@@ -1,6 +1,6 @@
 package edu.java.clients.github;
 
-import edu.java.clients.responses.GitHubResponse;
+import edu.java.responses.GitHubResponse;
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.List;

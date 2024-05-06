@@ -1,4 +1,4 @@
-package edu.java.configuration;
+package edu.java.configuration.database;
 
 import edu.java.domain.repository.jpa.JpaChatRepository;
 import edu.java.domain.repository.jpa.JpaLinkRepository;

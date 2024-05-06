@@ -2,8 +2,9 @@ app:
   scheduler:
     enable: true
     interval: 100s
-    force-check-delay: 50s
+    force-check-delay: 10s
   database-access-type: jpa
+  use-queue: false
   github-client:
     base-url: https://api.github.com
     retry:
@@ -34,6 +35,10 @@ app:
         - 500
         - 502
         - 503
+  kafka-producer:
+    bootstrap-servers: localhost:29092
+    acks: all
+    topic-name: updates
 
 spring:
   liquibase:
@@ -53,18 +58,19 @@ spring:
       hibernate:
         format_sql: true
         show_sql: false
+
   cache:
     jcache:
       provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
     cache-names:
-      - buckets
+      - scrapper-buckets
     caffeine:
       spec: maximumSize=100000,expireAfterAccess=3600s
 
 bucket4j:
   enabled: true
   filters:
-    - cache-name: buckets
+    - cache-name: scrapper-buckets
       url: .*
       http-status-code: TOO_MANY_REQUESTS
       http-response-body: "{ \"status\": 429, \"error\": \"Too Many Requests\", \"message\":
@@ -90,3 +96,20 @@ springdoc:
 
 logging:
   config: classpath:log4j2-plain.xml
+
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include:
+          - info
+          - health
+          - prometheus
+      path-mapping:
+        prometheus: /metrics
+  metrics:
+    tags:
+      application: ${spring.application.name}

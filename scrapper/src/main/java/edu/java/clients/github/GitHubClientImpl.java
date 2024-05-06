@@ -2,10 +2,11 @@ package edu.java.clients.github;
 
 import edu.java.api_exceptions.BadRequestException;
 import edu.java.api_exceptions.ServerErrorException;
-import edu.java.clients.responses.GitHubResponse;
 import edu.java.exceptions.TooManyRequestsException;
+import edu.java.responses.GitHubResponse;
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
+import java.util.Comparator;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -52,6 +53,7 @@ public class GitHubClientImpl implements GitHubClient {
             .retryWhen(retry)
             .filter(gitHubResponse -> gitHubResponse.lastModified().isAfter(fromDate)
                 && (gitHubResponse.lastModified().isBefore(toDate) || gitHubResponse.lastModified().isEqual(toDate)))
+            .sort(Comparator.comparing(GitHubResponse::lastModified))
             .switchIfEmpty(Flux.empty())
             .collectList()
             .block();
