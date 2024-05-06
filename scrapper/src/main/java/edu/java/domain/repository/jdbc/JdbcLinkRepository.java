@@ -102,7 +102,7 @@ public class JdbcLinkRepository {
                 SET last_checked_at = ?
                 WHERE url = ?
                 """;
-        jdbcTemplate.update(sql, link.getLastChecked(), link.getUrl());
+        jdbcTemplate.update(sql, link.getLastChecked(), link.getUrl().toString());
     }
 
 }

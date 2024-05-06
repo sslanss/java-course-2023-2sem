@@ -66,8 +66,8 @@ public class JpaLinkService implements LinkService {
         if (!followingChat.getTrackedLinks().remove(untrackedLink)) {
             throw new UntrackedLinkException();
         }
-        //untrackedLink.getTrackingChats().remove(followingChat);--вроде не надо
-        jpaChatRepository.save(followingChat); //?
+
+        jpaChatRepository.save(followingChat);
 
         if (untrackedLink.getTrackingChats().size() == 1) {
             jpaLinkRepository.delete(untrackedLink);
