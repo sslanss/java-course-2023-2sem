@@ -14,9 +14,7 @@ import java.util.List;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -56,7 +54,7 @@ public class GitHubClientTest extends AbstractClientTest {
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(jsonToString("src/test/resources/github.json"))
+                .withBody(jsonToString("src/test/resources/json/github.json"))
             )
         );
 
@@ -87,7 +85,7 @@ public class GitHubClientTest extends AbstractClientTest {
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody(jsonToString("src/test/resources/github.json"))
+                .withBody(jsonToString("src/test/resources/json/github.json"))
             )
         );
 

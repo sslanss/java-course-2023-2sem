@@ -1,0 +1,7 @@
+{
+    "description": "Incorrect request parameters",
+    "code": "404 NOT_FOUND",
+    "exceptionName": "edu.java.api_exceptions.BadRequestException",
+    "exceptionMessage": null,
+    "stacktrace": null
+}
